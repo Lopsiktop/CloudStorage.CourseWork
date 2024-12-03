@@ -52,6 +52,20 @@ namespace CloudStorage.WebApi.Controllers
             return Ok(token);
         }
 
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginDto model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Login == model.Login);
+            if (user == null)
+                return BadRequest("Wrong login or password");
+
+            if (!user.Verify(model.Password))
+                return BadRequest("Wrong login or password");
+
+            var token = _jwt.CreateToken(user);
+            return Ok(token);
+        }
+
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Valid() => Ok("Valid");
