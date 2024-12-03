@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace CloudStorage.Data.Models;
+
+public partial class File
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string Path { get; set; } = null!;
+
+    public decimal Size { get; set; }
+
+    public int DirectoryId { get; set; }
+
+    public virtual Directory Directory { get; set; } = null!;
+
+    public virtual ICollection<Link> Links { get; set; } = new List<Link>();
+}
