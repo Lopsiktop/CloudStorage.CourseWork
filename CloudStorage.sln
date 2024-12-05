@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudStorage.WebApi", "CloudStorage.WebApi\CloudStorage.WebApi.csproj", "{B7C42DB5-A764-4C59-A06F-498C6C9CA06D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudStorage.WebApi", "CloudStorage.WebApi\CloudStorage.WebApi.csproj", "{B7C42DB5-A764-4C59-A06F-498C6C9CA06D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudStorage.Data", "CloudStorage.Data\CloudStorage.Data.csproj", "{4CC2D2F3-170B-4BC0-86E5-B7F06C2139D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudStorage.Data", "CloudStorage.Data\CloudStorage.Data.csproj", "{4CC2D2F3-170B-4BC0-86E5-B7F06C2139D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudStorage.Client", "CloudStorage.Client\CloudStorage.Client.csproj", "{FC323EAA-873D-4926-9F69-827103676A92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4CC2D2F3-170B-4BC0-86E5-B7F06C2139D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CC2D2F3-170B-4BC0-86E5-B7F06C2139D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CC2D2F3-170B-4BC0-86E5-B7F06C2139D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC323EAA-873D-4926-9F69-827103676A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC323EAA-873D-4926-9F69-827103676A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC323EAA-873D-4926-9F69-827103676A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC323EAA-873D-4926-9F69-827103676A92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

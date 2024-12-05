@@ -51,6 +51,7 @@ builder.Services.AddDbContext<CloudStorageContext>(x =>
 {
     x.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
 });
+builder.WebHost.UseUrls("http://0.0.0.0:5044/");
 builder.Services.AddSingleton<JwtProvider>();
 
 var app = builder.Build();
