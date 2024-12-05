@@ -4,7 +4,6 @@ using CloudStorage.Client.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel.DataAnnotations;
-using System.Net.NetworkInformation;
 
 namespace CloudStorage.Client.ViewModels;
 
@@ -49,6 +48,12 @@ public partial class AuthorizeViewModel : ObservableValidator
     [RelayCommand(CanExecute = nameof(CanLoginMethodExecute))]
     private async void LoginMethod()
     {
+        ValidateProperty(Login, nameof(Login));
+        ValidateProperty(Password, nameof(Password));
+        
+        if (!CanLoginMethodExecute())
+            return;
+
         var result = await ApiHelper.LoginAsync(new LoginModel(_Login, _Password));
         if (result.IsError)
         {
@@ -68,7 +73,14 @@ public partial class AuthorizeViewModel : ObservableValidator
     [RelayCommand(CanExecute = nameof(CanRegisterMethodExecute))]
     private async void RegisterMethod()
     {
-        if(_RegisterPassword != _RegisterRetryPassword)
+        ValidateProperty(RegisterLogin, nameof(RegisterLogin));
+        ValidateProperty(RegisterPassword, nameof(RegisterPassword));
+        ValidateProperty(RegisterRetryPassword, nameof(RegisterRetryPassword));
+
+        if (!CanRegisterMethodExecute())
+            return;
+
+        if (_RegisterPassword != _RegisterRetryPassword)
         {
             await Notify.ShowAsync("Регистрация", "Пароли не совпадают", NotifyType.Error);
             return;
