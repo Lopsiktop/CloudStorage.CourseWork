@@ -3,30 +3,50 @@ using CloudStorage.Client.UI.UIHelpers;
 using CloudStorage.Client.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.ComponentModel.DataAnnotations;
+using System.Net.NetworkInformation;
 
 namespace CloudStorage.Client.ViewModels;
 
-public partial class AuthorizeViewModel : ObservableObject
+public partial class AuthorizeViewModel : ObservableValidator
 {
     [ObservableProperty]
     private string _Title = "Авторизация";
 
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Поле не может быть пустым")]
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(LoginMethodCommand))]
     private string _Login;
 
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Поле не может быть пустым")]
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(LoginMethodCommand))]
     private string _Password;
 
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Поле не может быть пустым")]
+    [MinLength(4, ErrorMessage = "Поле должно иметь хотя бы 4 символа")]
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RegisterMethodCommand))]
     private string _RegisterLogin;
 
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Поле не может быть пустым")]
+    [MinLength(4, ErrorMessage = "Поле должно иметь хотя бы 4 символа")]
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RegisterMethodCommand))]
     private string _RegisterPassword;
 
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Поле не может быть пустым")]
+    [MinLength(4, ErrorMessage = "Поле должно иметь хотя бы 4 символа")]
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RegisterMethodCommand))]
     private string _RegisterRetryPassword;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanLoginMethodExecute))]
     private async void LoginMethod()
     {
         var result = await ApiHelper.LoginAsync(new LoginModel(_Login, _Password));
@@ -43,7 +63,9 @@ public partial class AuthorizeViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    private bool CanLoginMethodExecute() => !GetErrors(nameof(Login)).Any() && !GetErrors(nameof(Password)).Any();
+
+    [RelayCommand(CanExecute = nameof(CanRegisterMethodExecute))]
     private async void RegisterMethod()
     {
         if(_RegisterPassword != _RegisterRetryPassword)
@@ -65,4 +87,8 @@ public partial class AuthorizeViewModel : ObservableObject
             return;
         }
     }
+
+    private bool CanRegisterMethodExecute() => !GetErrors(nameof(RegisterLogin)).Any() 
+        && !GetErrors(nameof(RegisterPassword)).Any()
+        && !GetErrors(nameof(RegisterRetryPassword)).Any();
 }
