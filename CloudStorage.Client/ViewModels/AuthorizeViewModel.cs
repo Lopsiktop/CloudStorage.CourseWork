@@ -1,6 +1,7 @@
 ﻿using CloudStorage.Client.Models;
 using CloudStorage.Client.UI.UIHelpers;
 using CloudStorage.Client.Utils;
+using CloudStorage.Client.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel.DataAnnotations;
@@ -66,6 +67,8 @@ public partial class AuthorizeViewModel : ObservableValidator
             await Notify.ShowAsync("Авторизация", "Ошибка сервера, попробуйте чуть позже", NotifyType.Error);
             return;
         }
+
+        WindowUtils.ShowRootWindow<RootWindow>();
     }
 
     private bool CanLoginMethodExecute() => !GetErrors(nameof(Login)).Any() && !GetErrors(nameof(Password)).Any();
@@ -98,6 +101,8 @@ public partial class AuthorizeViewModel : ObservableValidator
             await Notify.ShowAsync("Регистрация", "Ошибка сервера, попробуйте чуть позже", NotifyType.Error);
             return;
         }
+
+        WindowUtils.ShowRootWindow<RootWindow>();
     }
 
     private bool CanRegisterMethodExecute() => !GetErrors(nameof(RegisterLogin)).Any() 
