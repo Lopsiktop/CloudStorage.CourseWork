@@ -11,7 +11,7 @@ namespace CloudStorage.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
         private readonly CloudStorageContext _context;
         private readonly JwtProvider _jwt;
@@ -20,6 +20,30 @@ namespace CloudStorage.WebApi.Controllers
         {
             _context = context;
             _jwt = jwt;
+        }
+
+        [HttpGet("Me"), Authorize]
+        public async Task<IActionResult> GetMe()
+        {
+            var id = GetIdByJwt();
+            if (id == null)
+                return Unauthorized();
+
+            var user = await _context.Users.Include(x => x.RootDir)
+                .ThenInclude(x => x.Files)
+                .Include(x => x.RootDir).ThenInclude(x => x.InverseParent)
+                .AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            return Ok(
+                new ReturnUserDto(user.StorageVolume, 
+                    new ReturnRootDirDto(
+                        user.RootDir.Id, 
+                        user.RootDir.Name,
+                        user.RootDir.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)), 
+                        user.RootDir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name))
+                    )
+                )
+            );
         }
 
         [HttpPost("Register")]
