@@ -11,5 +11,10 @@ namespace CloudStorage.Client.Views
             InitializeComponent();
             DataContext = new RootViewModel();
         }
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await (DataContext as RootViewModel).Loaded();
+        }
     }
 }

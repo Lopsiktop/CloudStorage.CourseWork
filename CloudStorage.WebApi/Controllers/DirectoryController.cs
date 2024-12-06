@@ -19,6 +19,29 @@ namespace CloudStorage.WebApi.Controllers
             _context = context;
         }
 
+        [HttpGet("GetStructure"), Authorize]
+        public async Task<IActionResult> GetAllFolders()
+        {
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == GetIdByJwt());
+            var dirs = await GetAllDirectories(user.RootDirId);
+
+            return Ok(dirs);
+        }
+
+        protected async Task<List<DirStructureDto>> GetAllDirectories(int dirId)
+        {
+            var dir = await _context.Directories.FindAsync(dirId);
+            var dirs = await _context.Directories.Where(x => x.ParentId == dir.Id).ToListAsync();
+            var list = new List<DirStructureDto>();
+
+            foreach (var d in dirs)
+            {
+                list.Add(new DirStructureDto(d.Id, d.Name, await GetAllDirectories(d.Id)));
+            }
+
+            return list;
+        }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> CreateDir(CreateDirDto model)
         {

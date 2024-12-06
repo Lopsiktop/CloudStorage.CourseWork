@@ -10,13 +10,69 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         xmlns:ui="clr-namespace:CloudStorage.Client.UI"
+        xmlns:conv="clr-namespace:CloudStorage.Client.Converters"
         d:DataContext="{d:DesignInstance viewModels:RootViewModel, IsDesignTimeCreatable=True}"
-        Title="Главная" Height="600" Width="1000">
+        Title="Главная" Height="600" Width="1000" Loaded="Window_Loaded">
+    <Window.Resources>
+        <ResourceDictionary>
+            <conv:TypeToImageConverter x:Key="typetoimgconv"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <TabControl TabStripPlacement="Left">
-            <TabItem Width="200" Header="Главная"></TabItem>
-            <TabItem Width="200" Header="Диск"></TabItem>
-            <TabItem Width="200" Header="Профиль"></TabItem>
-        </TabControl>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <TreeView ItemsSource="{Binding Nodes}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Height="20" Source="{Binding Type, Converter={StaticResource typetoimgconv}}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <!--<TreeViewItem>
+                    <TreeViewItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Home"/>
+                            <TextBlock Margin="10 0 0 0" Text="Диск"/>
+                        </StackPanel>
+                    </TreeViewItem.Header>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Resources/Images/folder.png" Height="20"/>
+                                <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" Text="Анапа 2004"/>
+                            </StackPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Resources/Images/folder.png" Height="20"/>
+                                <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" Text="Польша"/>
+                            </StackPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Resources/Images/folder.png" Height="20"/>
+                                <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" Text="Курсовая"/>
+                            </StackPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>-->
+            </TreeView>
+        </Grid>
+
+        <GridSplitter Width="2"/>
+
+        <Grid Grid.Column="1">
+
+        </Grid>
     </Grid>
 </Window>

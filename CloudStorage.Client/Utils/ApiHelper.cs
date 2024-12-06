@@ -45,4 +45,28 @@ public static class ApiHelper
 
         return new Result<bool>(response.IsSuccessStatusCode);
     }
+
+    public static async Task<Result<ReturnUserDto>> GetMeAsync()
+    {
+        var response = await _http.GetAsync(_url + "User/Me");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<ReturnUserDto>();
+            return new Result<ReturnUserDto>(content);
+        }
+
+        return new Result<ReturnUserDto>("Ошибка сервера");
+    }
+
+    public static async Task<Result<List<DirStructureDto>>> GetStructure()
+    {
+        var response = await _http.GetAsync(_url + "Directory/GetStructure");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<List<DirStructureDto>>();
+            return new Result<List<DirStructureDto>>(content);
+        }
+
+        return new Result<List<DirStructureDto>>("Ошибка сервера");
+    }
 }
