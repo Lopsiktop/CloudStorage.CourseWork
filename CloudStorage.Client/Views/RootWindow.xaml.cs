@@ -25,6 +25,7 @@ namespace CloudStorage.Client.Views
         private async void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             viewModel.TreeValue = (ItemNode)e.NewValue;
+            await viewModel.TreeValueChanged();
         }
 
         private async void Grid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

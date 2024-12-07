@@ -34,6 +34,12 @@ public partial class RootViewModel : ObservableValidator
         DirSteps.Clear();
     }
 
+    public async Task TreeValueChanged()
+    {
+        var dir = new ReturnDirDto(TreeValue.DirId, TreeValue.Name);
+        await LoadDir(dir);
+    }
+
     [RelayCommand(CanExecute = nameof(CanMoveBack))]
     private async void MoveBack()
     {
