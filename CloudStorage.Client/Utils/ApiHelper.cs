@@ -76,4 +76,28 @@ public static class ApiHelper
 
         return new Result<List<DirStructureDto>>("Ошибка сервера");
     }
+
+    public static async Task<Result<List<ReturnDirDto>>> GetDirsByFolderId(int dirId)
+    {
+        var response = await _http.GetAsync(_url + $"Directory/GetDirsByDirId/{dirId}");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<List<ReturnDirDto>>();
+            return new Result<List<ReturnDirDto>>(content);
+        }
+
+        return new Result<List<ReturnDirDto>>("Ошибка сервера");
+    }
+
+    public static async Task<Result<List<ReturnFileDto>>> GetFilesByFolderId(int dirId)
+    {
+        var response = await _http.GetAsync(_url + $"File/GetFilesByDirId/{dirId}");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<List<ReturnFileDto>>();
+            return new Result<List<ReturnFileDto>>(content);
+        }
+
+        return new Result<List<ReturnFileDto>>("Ошибка сервера");
+    }
 }

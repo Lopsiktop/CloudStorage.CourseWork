@@ -1,26 +1,39 @@
 ﻿using CloudStorage.Client.Models;
+using CloudStorage.Client.UI;
 using CloudStorage.Client.ViewModels;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CloudStorage.Client.Views
 {
     public partial class RootWindow : Window
     {
+        private readonly RootViewModel viewModel;
         public RootWindow()
         {
             InitializeComponent();
-            DataContext = new RootViewModel();
+            viewModel = new RootViewModel();
+            DataContext = viewModel;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            await (DataContext as RootViewModel).Loaded();
+            await viewModel.Loaded();
         }
 
         private async void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            (DataContext as RootViewModel).TreeValue = (ItemNode)e.NewValue;
+            viewModel.TreeValue = (ItemNode)e.NewValue;
+        }
+
+        private async void Grid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            {
+                var folderGrid = (FolderGrid)sender;
+                await viewModel.FolderDoubleClick(folderGrid.FolderModel);
+            }
         }
     }
 }

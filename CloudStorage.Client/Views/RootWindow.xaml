@@ -34,10 +34,19 @@
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4"></Grid>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4">
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding MoveBackCommand}" BorderThickness="0" Style="{x:Null}" Width="40">
+                    <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="ArrowBack"/>
+                </Button>
+                <Button Command="{Binding MoveForwardCommand}" BorderThickness="0" Style="{x:Null}" Width="40">
+                    <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="ArrowForward"/>
+                </Button>
+            </StackPanel>
+        </Grid>
 
         <Grid Grid.Column="0" Grid.Row="2">
-            <TreeView SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding Nodes}">
+            <TreeView Name="TreeBox" SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding Nodes}">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
@@ -90,14 +99,14 @@
                     <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
 
                     <DataTemplate DataType="{x:Type models:ReturnDirDto}">
-                        <Grid Width="90" Height="90">
-                            <Grid.RowDefinitions>
+                        <ui:FolderGrid FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
+                            <ui:FolderGrid.RowDefinitions>
                                 <RowDefinition Height="70"/>
                                 <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
+                            </ui:FolderGrid.RowDefinitions>
                             <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
                             <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding DirName}"/>
-                        </Grid>
+                        </ui:FolderGrid>
                     </DataTemplate>
                 </ListView.Resources>
                 <ListView.ItemsSource>
