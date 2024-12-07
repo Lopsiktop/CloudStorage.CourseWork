@@ -12,16 +12,20 @@ namespace CloudStorage.Client.ViewModels;
 public partial class RootViewModel : ObservableValidator
 {
     public ObservableCollection<ItemNode> Nodes { get; set; } = new ObservableCollection<ItemNode>();
-    public ObservableCollection<ReturnDirDto> Dirs { get; set; } = new ObservableCollection<ReturnDirDto>()
-    {
-        new ReturnDirDto(0, "hello")
-    };
+    public ObservableCollection<ReturnDirDto> Dirs { get; set; } = new ObservableCollection<ReturnDirDto>();
     public ObservableCollection<ReturnFileDto> Files { get; set; } = new ObservableCollection<ReturnFileDto>();
 
-    private List<int> DirSteps = new List<int>();
+    private List<ReturnDirDto> DirSteps = new List<ReturnDirDto>();
+    private List<ReturnDirDto> PrevSteps = new List<ReturnDirDto>();
 
     [ObservableProperty]
     private ItemNode _TreeValue;
+
+    [ObservableProperty]
+    private ReturnDirDto _CurrentDir;
+
+    [ObservableProperty]
+    private bool _IsLoading;
 
     public RootViewModel()
     {
@@ -34,18 +38,30 @@ public partial class RootViewModel : ObservableValidator
     private async void MoveBack()
     {
         var prev = DirSteps[DirSteps.Count - 2];
+        PrevSteps.Add(DirSteps.Last());
         DirSteps.RemoveAt(DirSteps.Count - 1);
+
         MoveBackCommand.NotifyCanExecuteChanged();
+        MoveForwardCommand.NotifyCanExecuteChanged();
+
         await LoadDir(prev, false);
     }
 
     private bool CanMoveBack() => DirSteps.Count > 1;
 
-    [RelayCommand]
-    private void MoveForward()
+    [RelayCommand(CanExecute = nameof(CanMoveForward))]
+    private async void MoveForward()
     {
+        var last = PrevSteps.Last();
+        PrevSteps.RemoveAt(PrevSteps.Count - 1);
 
+        MoveBackCommand.NotifyCanExecuteChanged();
+        MoveForwardCommand.NotifyCanExecuteChanged();
+
+        await LoadDir(last, true);
     }
+
+    private bool CanMoveForward() => PrevSteps.Count > 0;
 
     [RelayCommand]
     private void Logout()
@@ -56,7 +72,7 @@ public partial class RootViewModel : ObservableValidator
 
     public async Task FolderDoubleClick(ReturnDirDto folder)
     {
-        await LoadDir(folder.DirId);
+        await LoadDir(folder);
     }
 
     public ItemNode? GetNode(ItemNode node, int id)
@@ -76,6 +92,7 @@ public partial class RootViewModel : ObservableValidator
 
     public async Task Loaded()
     {
+        IsLoading = true;
         var node = Nodes.First();
 
         var result = await ApiHelper.GetMeAsync();
@@ -87,7 +104,9 @@ public partial class RootViewModel : ObservableValidator
             Files.Clear();
 
             node.DirId = result.Value.RootDir.DirId;
-            DirSteps.Add(node.DirId);
+            var root = new ReturnDirDto(node.DirId, node.Name);
+            DirSteps.Add(root);
+            CurrentDir = root;
 
             var structure = await ApiHelper.GetStructure();
             if (!structure.IsError)
@@ -102,10 +121,13 @@ public partial class RootViewModel : ObservableValidator
             foreach (var file in result.Value.RootDir.Files)
                 Files.Add(file);
         }
+
+        IsLoading = false;
     }
 
-    public async Task LoadDir(int dirId, bool step = true)
+    public async Task LoadDir(ReturnDirDto dirt, bool step = true)
     {
+        var dirId = dirt.DirId;
         var dirsResponse = await ApiHelper.GetDirsByFolderId(dirId);
         var foldersResponse = await ApiHelper.GetFilesByFolderId(dirId);
 
@@ -126,8 +148,10 @@ public partial class RootViewModel : ObservableValidator
         }
 
         if(step)
-            DirSteps.Add(dirId);
+            DirSteps.Add(dirt);
+
         MoveBackCommand.NotifyCanExecuteChanged();
+        CurrentDir = dirt;
     }
 
     private void AddFolder(ItemNode node, DirStructureDto dir)
