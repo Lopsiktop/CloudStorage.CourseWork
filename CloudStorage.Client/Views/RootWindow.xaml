@@ -15,17 +15,28 @@
         d:DataContext="{d:DesignInstance viewModels:RootViewModel, IsDesignTimeCreatable=True}"
         Title="Главная" Height="600" Width="1000" Loaded="Window_Loaded">
     <Window.Resources>
-        <ResourceDictionary>
-            <conv:TypeToImageConverter x:Key="typetoimgconv"/>
-        </ResourceDictionary>
+        <conv:TypeToImageConverter x:Key="typetoimgconv"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Height="30" Header="Аккаунт">
+                <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4"></Grid>
+
+        <Grid Grid.Column="0" Grid.Row="2">
             <TreeView SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding Nodes}">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
@@ -70,26 +81,37 @@
             </TreeView>
         </Grid>
 
-        <GridSplitter Width="2"/>
+        <GridSplitter Grid.Row="2" Width="2"/>
 
-        <Grid Grid.Column="1">
-            <ListBox ItemsSource="{Binding Dirs}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListBox.Resources>
-                    <ResourceDictionary>
-                        <DataTemplate DataType="models:ReturnDirDto">
-                            <TextBlock Text="{Binding DirName}"/>
-                        </DataTemplate>
-                        <DataTemplate DataType="models:ReturnFileDto">
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </ResourceDictionary>
-                </ListBox.Resources>
-                <ListBox.ItemsPanel>
+        <Grid Grid.Row="2" Grid.Column="1">
+            <ListView>
+                <ListView.Resources>
+                    <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
+                    <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
+
+                    <DataTemplate DataType="{x:Type models:ReturnDirDto}">
+                        <Grid Width="90" Height="90">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="70"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
+                            <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding DirName}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.Resources>
+                <ListView.ItemsSource>
+                    <CompositeCollection>
+                        <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
+                        <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
+                    </CompositeCollection>
+                </ListView.ItemsSource>
+                <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel IsItemsHost="True"/>
+                        <WrapPanel />
                     </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
+                </ListView.ItemsPanel>
+            </ListView>
         </Grid>
     </Grid>
 </Window>

@@ -25,9 +25,11 @@ public partial class RootViewModel : ObservableValidator
         Nodes.Add(node);
     }
 
-    public async Task LoadFilesForm()
+    [RelayCommand]
+    private void Logout()
     {
-
+        SessionHandler.LogoutSession();
+        WindowUtils.ReturnRootWindow();
     }
 
     public async Task Loaded()

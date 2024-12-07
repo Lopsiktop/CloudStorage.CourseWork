@@ -13,6 +13,13 @@ public static class WindowUtils
         where T : Window, new()
     {
         ActiveWindow?.Hide();
+        var exists = App.Current.Windows.OfType<T>().FirstOrDefault();
+        if (exists != null)
+        {
+            exists.Show();
+            return;
+        }
+
         var window = new T();
         window.Owner = ActiveWindow;
         window.Closing += (s, e) =>
@@ -28,5 +35,11 @@ public static class WindowUtils
         var window = new T();
         window.Owner = ActiveWindow;
         window.ShowDialog();
+    }
+
+    public static void ReturnRootWindow()
+    {
+        ActiveWindow?.Hide();
+        RootWindow.Show();
     }
 }

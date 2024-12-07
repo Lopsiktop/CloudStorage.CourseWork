@@ -46,6 +46,17 @@ public partial class AuthorizeViewModel : ObservableValidator
     [NotifyCanExecuteChangedFor(nameof(RegisterMethodCommand))]
     private string _RegisterRetryPassword;
 
+    public async Task Loaded()
+    {
+        var token = await SessionHandler.GetSessionAsync();
+        if (token != null)
+        {
+            ApiHelper.SetToken(token);
+            WindowUtils.ShowRootWindow<RootWindow>();
+            return;
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(CanLoginMethodExecute))]
     private async void LoginMethod()
     {

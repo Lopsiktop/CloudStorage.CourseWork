@@ -1,14 +1,23 @@
 ﻿using CloudStorage.Client.UI.UIHelpers;
+using CloudStorage.Client.Utils;
 using CloudStorage.Client.ViewModels;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CloudStorage.Client;
 
 public partial class MainWindow : Window
 {
+    private readonly AuthorizeViewModel viewModel;
     public MainWindow()
     {
         InitializeComponent();
-        this.DataContext = new AuthorizeViewModel();
+        this.viewModel = new AuthorizeViewModel();
+        this.DataContext = this.viewModel;
+    }
+
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        await viewModel.Loaded();
     }
 }

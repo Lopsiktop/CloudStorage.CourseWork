@@ -11,6 +11,11 @@ public static class ApiHelper
 
     private static HttpClient _http = new HttpClient();
 
+    public static void SetToken(string token)
+    {
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
     public static async Task<Result<bool>> LoginAsync(LoginModel model)
     {
         var response = await _http.PostAsJsonAsync(_url + "User/Login", model);
@@ -18,6 +23,7 @@ public static class ApiHelper
         {
             var token = await response.Content.ReadAsStringAsync();
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            await SessionHandler.SaveSessionAsync(token);
         }
         else
         {
@@ -35,6 +41,7 @@ public static class ApiHelper
         {
             var token = await response.Content.ReadAsStringAsync();
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            await SessionHandler.SaveSessionAsync(token);
         }
         else
         {
