@@ -10,13 +10,24 @@ namespace CloudStorage.Client.ViewModels;
 public partial class RootViewModel : ObservableValidator
 {
     public ObservableCollection<ItemNode> Nodes { get; set; } = new ObservableCollection<ItemNode>();
-    public ObservableCollection<ReturnDirDto> Dirs { get; set; } = new ObservableCollection<ReturnDirDto>();
+    public ObservableCollection<ReturnDirDto> Dirs { get; set; } = new ObservableCollection<ReturnDirDto>()
+    {
+        new ReturnDirDto(0, "hello")
+    };
     public ObservableCollection<ReturnFileDto> Files { get; set; } = new ObservableCollection<ReturnFileDto>();
+
+    [ObservableProperty]
+    private ItemNode _TreeValue;
 
     public RootViewModel()
     {
         var node = new ItemNode { Name = "Диск", Type = NodeType.Disk };
         Nodes.Add(node);
+    }
+
+    public async Task LoadFilesForm()
+    {
+
     }
 
     public async Task Loaded()

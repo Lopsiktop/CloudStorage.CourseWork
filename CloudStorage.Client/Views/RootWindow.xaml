@@ -8,6 +8,7 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModels="clr-namespace:CloudStorage.Client.ViewModels"
         mc:Ignorable="d"
+        xmlns:models="clr-namespace:CloudStorage.Client.Models"
         WindowStartupLocation="CenterScreen"
         xmlns:ui="clr-namespace:CloudStorage.Client.UI"
         xmlns:conv="clr-namespace:CloudStorage.Client.Converters"
@@ -25,7 +26,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <TreeView ItemsSource="{Binding Nodes}">
+            <TreeView SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding Nodes}">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                         <StackPanel Orientation="Horizontal">
@@ -72,7 +73,23 @@
         <GridSplitter Width="2"/>
 
         <Grid Grid.Column="1">
-
+            <ListBox ItemsSource="{Binding Dirs}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.Resources>
+                    <ResourceDictionary>
+                        <DataTemplate DataType="models:ReturnDirDto">
+                            <TextBlock Text="{Binding DirName}"/>
+                        </DataTemplate>
+                        <DataTemplate DataType="models:ReturnFileDto">
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ResourceDictionary>
+                </ListBox.Resources>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
         </Grid>
     </Grid>
 </Window>
