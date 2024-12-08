@@ -3,6 +3,7 @@ using CloudStorage.Client.UI;
 using CloudStorage.Client.ViewModels;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace CloudStorage.Client.Views
@@ -35,6 +36,11 @@ namespace CloudStorage.Client.Views
                 var folderGrid = (FolderGrid)sender;
                 await viewModel.FolderDoubleClick(folderGrid.FolderModel);
             }
+        }
+
+        private async void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            await viewModel.LostFocusEditable();
         }
     }
 }

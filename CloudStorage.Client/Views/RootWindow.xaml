@@ -19,117 +19,102 @@
         <conv:BoolToVisibleConverter x:Key="boolconv"/>
     </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="40" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <Menu Grid.Row="0" Grid.ColumnSpan="2">
-            <MenuItem Height="30" Header="Аккаунт">
-                <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
-            </MenuItem>
-        </Menu>
-
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4">
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="250"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Button Command="{Binding MoveBackCommand}" BorderThickness="0" Style="{x:Null}" Width="40">
-                    <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="ArrowBack"/>
-                </Button>
-                <Button Command="{Binding MoveForwardCommand}" BorderThickness="0" Style="{x:Null}" Width="40">
-                    <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="ArrowForward"/>
-                </Button>
-            </StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="40" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-            <TextBlock Grid.Column="1" Text="{Binding CurrentDir.DirName}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"/>
-        </Grid>
+            <Menu Grid.Row="0" Grid.ColumnSpan="2">
+                <MenuItem Height="30" Header="Аккаунт">
+                    <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
+                </MenuItem>
+            </Menu>
 
-        <Grid Grid.Column="0" Grid.Row="2">
-            <TreeView Name="TreeBox" SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding Nodes}">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Height="20" Source="{Binding Type, Converter={StaticResource typetoimgconv}}"/>
-                            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Name}"/>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-                <!--<TreeViewItem>
-                    <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Home"/>
-                            <TextBlock Margin="10 0 0 0" Text="Диск"/>
-                        </StackPanel>
-                    </TreeViewItem.Header>
-                    <TreeViewItem>
-                        <TreeViewItem.Header>
+            <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Command="{Binding MoveBackCommand}" BorderThickness="0" Style="{x:Null}" Width="40">
+                        <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="ArrowBack"/>
+                    </Button>
+                    <Button Command="{Binding MoveForwardCommand}" BorderThickness="0" Style="{x:Null}" Width="40">
+                        <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="ArrowForward"/>
+                    </Button>
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" Text="{Binding CurrentDir.DirName}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"/>
+            </Grid>
+
+            <Grid Grid.Column="0" Grid.Row="2">
+                <TreeView Name="TreeBox" SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding Nodes}">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/Images/folder.png" Height="20"/>
-                                <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" Text="Анапа 2004"/>
+                                <Image Height="20" Source="{Binding Type, Converter={StaticResource typetoimgconv}}"/>
+                                <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Name}"/>
                             </StackPanel>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                    <TreeViewItem>
-                        <TreeViewItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/Images/folder.png" Height="20"/>
-                                <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" Text="Польша"/>
-                            </StackPanel>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                    <TreeViewItem>
-                        <TreeViewItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/Images/folder.png" Height="20"/>
-                                <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" Text="Курсовая"/>
-                            </StackPanel>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                </TreeViewItem>-->
-            </TreeView>
-        </Grid>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Grid>
 
-        <GridSplitter Grid.Row="2" Width="2"/>
+            <GridSplitter Grid.Row="2" Width="2"/>
 
-        <Grid Grid.Row="2" Grid.Column="1">
-            <TextBlock Visibility="{Binding IsLoading, Converter={StaticResource boolconv}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Загрузка..."/>
-            <ListView>
-                <ListView.Resources>
-                    <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
-                    <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
+            <Grid Grid.Row="2" Grid.Column="1">
+                <TextBlock Visibility="{Binding IsLoading, Converter={StaticResource boolconv}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Загрузка..."/>
+                <ListView>
+                    <ListView.Resources>
+                        <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
+                        <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
 
-                    <DataTemplate DataType="{x:Type models:ReturnDirDto}">
-                        <ui:FolderGrid FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
-                            <ui:FolderGrid.RowDefinitions>
-                                <RowDefinition Height="70"/>
-                                <RowDefinition Height="*"/>
-                            </ui:FolderGrid.RowDefinitions>
-                            <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
-                            <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding DirName}"/>
-                        </ui:FolderGrid>
-                    </DataTemplate>
-                </ListView.Resources>
-                <ListView.ItemsSource>
-                    <CompositeCollection>
-                        <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
-                        <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
-                    </CompositeCollection>
-                </ListView.ItemsSource>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
+                        <DataTemplate DataType="{x:Type models:ReturnDirDto}">
+                            <ui:FolderGrid FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
+                                <ui:FolderGrid.RowDefinitions>
+                                    <RowDefinition Height="70"/>
+                                    <RowDefinition Height="*"/>
+                                </ui:FolderGrid.RowDefinitions>
+                                <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
+                                <Grid Grid.Row="1" HorizontalAlignment="Center">
+                                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+                            </ui:FolderGrid>
+                        </DataTemplate>
+                    </ListView.Resources>
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding CreateDirCommand}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Height="25" Source="/Resources/Images/folder.png"/>
+                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Создать папку"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                    <ListView.ItemsSource>
+                        <CompositeCollection>
+                            <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
+                            <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
+                        </CompositeCollection>
+                    </ListView.ItemsSource>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

@@ -41,6 +41,21 @@ namespace CloudStorage.WebApi.Controllers
 
             return list;
         }
+        protected async Task<string> GetFullPath(int dirId)
+        {
+            return Path.Combine("Source", await GetPath(dirId));
+        }
+
+        protected async Task<string> GetPath(int? dirId)
+        {
+            if (dirId == null)
+                return "";
+            var dir = await _context.Directories.FindAsync(dirId);
+            if (dir == null)
+                return "";
+
+            return Path.Combine(dir.Name, await GetPath(dir.ParentId));
+        }
 
         [HttpPost, Authorize]
         public async Task<IActionResult> CreateDir(CreateDirDto model)
@@ -62,6 +77,9 @@ namespace CloudStorage.WebApi.Controllers
             
             await _context.Directories.AddAsync(dir);
             await _context.SaveChangesAsync();
+
+            var path = await GetFullPath(dir.Id);
+
             return Ok(new ReturnDirDto(dir.Id, dir.Name));
         }
 

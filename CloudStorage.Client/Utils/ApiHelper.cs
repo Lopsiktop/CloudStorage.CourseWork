@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Windows.Controls;
 
 namespace CloudStorage.Client.Utils;
 
@@ -99,5 +100,17 @@ public static class ApiHelper
         }
 
         return new Result<List<ReturnFileDto>>("Ошибка сервера");
+    }
+
+    public static async Task<Result<ReturnDirDto>> CreateDirectory(CreateDirDto model)
+    {
+        var response = await _http.PostAsJsonAsync(_url + "Directory", model);
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<ReturnDirDto>();
+            return new Result<ReturnDirDto>(content);
+        }
+
+        return new Result<ReturnDirDto>("Ошибка сервера");
     }
 }
