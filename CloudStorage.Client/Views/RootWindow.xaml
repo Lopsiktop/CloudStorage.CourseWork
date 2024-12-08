@@ -17,6 +17,7 @@
     <Window.Resources>
         <conv:TypeToImageConverter x:Key="typetoimgconv"/>
         <conv:BoolToVisibleConverter x:Key="boolconv"/>
+        <conv:BoolToVisibleDescConverter x:Key="descconv"/>
     </Window.Resources>
     <Grid>
         <Grid>
@@ -77,16 +78,36 @@
                         <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
 
                         <DataTemplate DataType="{x:Type models:ReturnDirDto}">
-                            <ui:FolderGrid FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
+                            <ui:FolderGrid ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
                                 <ui:FolderGrid.RowDefinitions>
                                     <RowDefinition Height="70"/>
                                     <RowDefinition Height="*"/>
                                 </ui:FolderGrid.RowDefinitions>
                                 <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
                                 <Grid Grid.Row="1" HorizontalAlignment="Center">
-                                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
                                     <TextBox LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
+                                <ui:FolderGrid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem>
+                                            <MenuItem.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <md:PackIcon Kind="Rename"/>
+                                                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
+                                                </StackPanel>
+                                            </MenuItem.Header>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <MenuItem.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <md:PackIcon Kind="Delete"/>
+                                                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
+                                                </StackPanel>
+                                            </MenuItem.Header>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </ui:FolderGrid.ContextMenu>
                             </ui:FolderGrid>
                         </DataTemplate>
                     </ListView.Resources>

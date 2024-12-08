@@ -12,6 +12,20 @@ public static class CloudProvider
         System.IO.Directory.CreateDirectory(rootPath);
     }
 
+    public static bool CreateFolder(string pathn)
+    {
+        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", pathn);
+        try
+        {
+            Directory.CreateDirectory(path);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public static string GetFullPathByLogin(string login)
     {
         var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Root_{login}");

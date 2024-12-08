@@ -57,7 +57,20 @@ public partial class RootViewModel : ObservableValidator
             
             if(dir.DirId == -1)
             {
-                //todo: create dir using api
+                var create = await ApiHelper.CreateDirectory(new CreateDirDto(dir.DirName, CurrentDir.DirId));
+                if (create.IsError)
+                {
+                    await Notify.ShowAsync("Ошибка", "Не удалось создать папку", NotifyType.Error);
+                    Dirs.Remove(dir);
+                    return true;
+                }
+
+                var value = create.Value;
+                dir.DirId = value.DirId;
+
+                await RefreshStructure();
+                return true;
+                //todo: add folder to tree
             }
             else
             {
@@ -154,6 +167,18 @@ public partial class RootViewModel : ObservableValidator
         return null;
     }
 
+    public async Task RefreshStructure()
+    {
+        var node = Nodes.First();
+        node.Nodes.Clear();
+        var structure = await ApiHelper.GetStructure();
+        if (!structure.IsError)
+        {
+            foreach (var dir in structure.Value)
+                AddFolder(node, dir);
+        }
+    }
+
     public async Task Loaded()
     {
         IsLoading = true;
@@ -172,12 +197,7 @@ public partial class RootViewModel : ObservableValidator
             DirSteps.Add(root);
             CurrentDir = root;
 
-            var structure = await ApiHelper.GetStructure();
-            if (!structure.IsError)
-            {
-                foreach (var dir in structure.Value)
-                    AddFolder(node, dir);
-            }
+            await RefreshStructure();
 
             foreach (var dir in result.Value.RootDir.Dirs)
                 Dirs.Add(dir);

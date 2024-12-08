@@ -1,5 +1,6 @@
 ﻿using CloudStorage.Data.Contexts;
 using CloudStorage.WebApi.DTOs;
+using CloudStorage.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,10 +42,6 @@ namespace CloudStorage.WebApi.Controllers
 
             return list;
         }
-        protected async Task<string> GetFullPath(int dirId)
-        {
-            return Path.Combine("Source", await GetPath(dirId));
-        }
 
         protected async Task<string> GetPath(int? dirId)
         {
@@ -54,7 +51,7 @@ namespace CloudStorage.WebApi.Controllers
             if (dir == null)
                 return "";
 
-            return Path.Combine(dir.Name, await GetPath(dir.ParentId));
+            return Path.Combine(await GetPath(dir.ParentId), dir.Name);
         }
 
         [HttpPost, Authorize]
@@ -78,7 +75,10 @@ namespace CloudStorage.WebApi.Controllers
             await _context.Directories.AddAsync(dir);
             await _context.SaveChangesAsync();
 
-            var path = await GetFullPath(dir.Id);
+            var path = await GetPath(dir.Id);
+            var created = CloudProvider.CreateFolder(path);
+            if (!created)
+                return BadRequest("Не удалось создать папку");
 
             return Ok(new ReturnDirDto(dir.Id, dir.Name));
         }
