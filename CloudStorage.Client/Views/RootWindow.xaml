@@ -72,7 +72,27 @@
 
             <Grid Grid.Row="2" Grid.Column="1">
                 <TextBlock Visibility="{Binding IsLoading, Converter={StaticResource boolconv}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Загрузка..."/>
-                <ListView>
+                <Border Visibility="{Binding IsDragging, Converter={StaticResource boolconv}}" Margin="10" CornerRadius="20" BorderThickness="2">
+                    <Border.BorderBrush>
+                        <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="Black">
+                                        <GeometryDrawing.Geometry>
+                                            <GeometryGroup>
+                                                <RectangleGeometry Rect="0,0,50,50" />
+                                                <RectangleGeometry Rect="50,50,50,50" />
+                                            </GeometryGroup>
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Border.BorderBrush>
+
+                    <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
+                </Border>
+                <ListView DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
                     <ListView.Resources>
                         <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
                         <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>

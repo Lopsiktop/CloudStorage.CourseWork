@@ -48,5 +48,25 @@ namespace CloudStorage.Client.Views
             if(e.Key == Key.Enter)
                 await viewModel.LostFocusEditable();
         }
+
+        private void ListView_Drop(object sender, DragEventArgs e)
+        {
+            viewModel.IsDragging = false;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                //todo: load files
+            }
+        }
+
+        private void ListView_DragEnter(object sender, DragEventArgs e)
+        {
+            viewModel.IsDragging = true;
+        }
+
+        private void ListView_DragLeave(object sender, DragEventArgs e)
+        {
+            viewModel.IsDragging = false;
+        }
     }
 }

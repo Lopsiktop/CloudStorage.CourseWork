@@ -27,6 +27,9 @@ public partial class RootViewModel : ObservableValidator
     [ObservableProperty]
     private bool _IsLoading;
 
+    [ObservableProperty]
+    private bool _IsDragging;
+
     public RootViewModel()
     {
         var node = new ItemNode { Name = "Диск", Type = NodeType.Disk };
@@ -71,7 +74,6 @@ public partial class RootViewModel : ObservableValidator
                 await RefreshStructure();
                 await Notify.ShowAsync("Успех", "Папка успешно создана", NotifyType.Success, 2);
                 return true;
-                //todo: add folder to tree
             }
             else
             {
