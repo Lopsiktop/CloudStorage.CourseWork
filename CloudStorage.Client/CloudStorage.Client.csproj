@@ -11,6 +11,8 @@
   <ItemGroup>
     <None Remove="Resources\Images\disk.png" />
     <None Remove="Resources\Images\folder.png" />
+    <None Remove="Resources\Images\pictures.png" />
+    <None Remove="Resources\Images\txt.png" />
     <None Remove="Resources\Images\unknown360.png" />
   </ItemGroup>
 
@@ -22,6 +24,8 @@
   <ItemGroup>
     <Resource Include="Resources\Images\disk.png" />
     <Resource Include="Resources\Images\folder.png" />
+    <Resource Include="Resources\Images\pictures.png" />
+    <Resource Include="Resources\Images\txt.png" />
     <Resource Include="Resources\Images\unknown360.png" />
   </ItemGroup>
 
