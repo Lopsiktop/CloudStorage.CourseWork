@@ -92,7 +92,7 @@
 
                     <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
                 </Border>
-                <ListView DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
                     <ListView.Resources>
                         <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
                         <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
@@ -130,6 +130,16 @@
                                 </ui:FolderGrid.ContextMenu>
                             </ui:FolderGrid>
                         </DataTemplate>
+                        <DataTemplate DataType="{x:Type models:ReturnFileDto}">
+                            <ui:FolderGrid Width="90" Height="90">
+                                <ui:FolderGrid.RowDefinitions>
+                                    <RowDefinition Height="65"/>
+                                    <RowDefinition Height="*"/>
+                                </ui:FolderGrid.RowDefinitions>
+                                <Image HorizontalAlignment="Center" Source="/Resources/Images/unknown360.png"/>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" TextTrimming="CharacterEllipsis" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                            </ui:FolderGrid>
+                        </DataTemplate>
                     </ListView.Resources>
                     <ListView.ContextMenu>
                         <ContextMenu>
@@ -151,7 +161,7 @@
                     </ListView.ItemsSource>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel />
+                            <WrapPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </ListView>

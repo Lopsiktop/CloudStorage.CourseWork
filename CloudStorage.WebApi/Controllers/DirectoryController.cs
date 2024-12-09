@@ -43,17 +43,6 @@ namespace CloudStorage.WebApi.Controllers
             return list;
         }
 
-        protected async Task<string> GetPath(int? dirId)
-        {
-            if (dirId == null)
-                return "";
-            var dir = await _context.Directories.FindAsync(dirId);
-            if (dir == null)
-                return "";
-
-            return Path.Combine(await GetPath(dir.ParentId), dir.Name);
-        }
-
         [HttpPost, Authorize]
         public async Task<IActionResult> CreateDir(CreateDirDto model)
         {
@@ -75,7 +64,7 @@ namespace CloudStorage.WebApi.Controllers
             await _context.Directories.AddAsync(dir);
             await _context.SaveChangesAsync();
 
-            var path = await GetPath(dir.Id);
+            var path = await GetPath(dir.Id, _context);
             var created = CloudProvider.CreateFolder(path);
             if (!created)
                 return BadRequest("Не удалось создать папку");

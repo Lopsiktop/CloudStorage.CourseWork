@@ -49,13 +49,13 @@ namespace CloudStorage.Client.Views
                 await viewModel.LostFocusEditable();
         }
 
-        private void ListView_Drop(object sender, DragEventArgs e)
+        private async void ListView_Drop(object sender, DragEventArgs e)
         {
             viewModel.IsDragging = false;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                //todo: load files
+                await viewModel.LoadFiles(files);
             }
         }
 

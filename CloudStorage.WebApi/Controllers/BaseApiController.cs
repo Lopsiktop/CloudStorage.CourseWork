@@ -23,4 +23,15 @@ public class BaseApiController : ControllerBase
         else
             return dir.Id;
     }
+
+    protected async Task<string> GetPath(int? dirId, CloudStorageContext context)
+    {
+        if (dirId == null)
+            return "";
+        var dir = await context.Directories.FindAsync(dirId);
+        if (dir == null)
+            return "";
+
+        return Path.Combine(await GetPath(dir.ParentId, context), dir.Name);
+    }
 }

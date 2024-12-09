@@ -1,7 +1,9 @@
 ﻿using CloudStorage.Client.Models;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Policy;
 using System.Windows.Controls;
 
 namespace CloudStorage.Client.Utils;
@@ -116,5 +118,33 @@ public static class ApiHelper
             return new Result<ReturnDirDto>("Ошибка сервера");
         else
             return new Result<ReturnDirDto>(error);
+    }
+
+    public static async Task<Result<ReturnFileDto>> LoadFiles(string file, int dirId)
+    {
+        using (var form = new MultipartFormDataContent())
+        {
+            using (var fs = File.OpenRead(file))
+            {
+                using (var streamContent = new StreamContent(fs))
+                {
+                    using (var fileContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync()))
+                    {
+                        form.Add(fileContent, "File", Path.GetFileName(file));
+                        form.Add(new StringContent(dirId.ToString()), "DirId");
+
+                        var response = await _http.PostAsync(_url + "File", form);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var dto = await response.Content.ReadFromJsonAsync<ReturnFileDto>();
+                            return new Result<ReturnFileDto>(dto);
+                        }
+
+                        var error = await response.Content.ReadAsStringAsync();
+                        return new Result<ReturnFileDto>(error);
+                    }
+                }
+            }
+        }
     }
 }

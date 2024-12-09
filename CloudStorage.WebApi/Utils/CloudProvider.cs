@@ -26,6 +26,23 @@ public static class CloudProvider
         }
     }
 
+    public static async Task<string?> LoadFileAsync(string pathToDir, IFormFile file)
+    {
+        try
+        {
+            var path = Path.Combine(Environment.CurrentDirectory, "Cloud", pathToDir, file.FileName);
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            return Path.Combine("Cloud", pathToDir, file.Name);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public static string GetFullPathByLogin(string login)
     {
         var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Root_{login}");

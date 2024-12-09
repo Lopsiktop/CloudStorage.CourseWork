@@ -46,6 +46,19 @@ public partial class RootViewModel : ObservableValidator
         return false;
     }
 
+    public async Task LoadFiles(string[] files)
+    {
+        var result = await ApiHelper.LoadFiles(files[0], CurrentDir.DirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        Files.Add(result.Value);
+        await Notify.ShowAsync("Успех", "Файл успешно добавлен", NotifyType.Success);
+    }
+
     public async Task<bool> LostFocusEditable()
     {
         var dir = Dirs.FirstOrDefault(x => x.IsEditing);
