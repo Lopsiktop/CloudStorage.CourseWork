@@ -31,9 +31,12 @@ public class FileController : BaseApiController
         if (user.RootDirId != rootId)
             return BadRequest("Данная папка не ваша");
 
-        //todo: limit size of one file
-        //todo: check disk space
-        //todo: check if file exists with this name
+        //todo: limit size of one file (if it would need for course work or diplom)
+        //todo: check disk space (if it would need for course work or diplom)
+
+        var exists = await _context.Files.FirstOrDefaultAsync(x => x.DirectoryId == model.DirId && x.Name == model.File.FileName);
+        if (exists != null)
+            return BadRequest("Файл с таким названием уже существует");
 
         var dir = await _context.Directories.FindAsync(model.DirId);
         if (dir == null)

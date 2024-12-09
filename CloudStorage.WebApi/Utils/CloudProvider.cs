@@ -35,7 +35,7 @@ public static class CloudProvider
             {
                 await file.CopyToAsync(stream);
             }
-            return Path.Combine("Cloud", pathToDir, file.Name);
+            return Path.Combine("Cloud", pathToDir, file.FileName);
         }
         catch
         {
