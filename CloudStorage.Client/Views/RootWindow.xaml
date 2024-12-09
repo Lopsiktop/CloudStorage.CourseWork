@@ -86,7 +86,7 @@
                                 <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
                                 <Grid Grid.Row="1" HorizontalAlignment="Center">
                                     <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <TextBox LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                                 <ui:FolderGrid.ContextMenu>
                                     <ContextMenu>

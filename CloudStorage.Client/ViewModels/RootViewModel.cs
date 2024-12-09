@@ -60,8 +60,8 @@ public partial class RootViewModel : ObservableValidator
                 var create = await ApiHelper.CreateDirectory(new CreateDirDto(dir.DirName, CurrentDir.DirId));
                 if (create.IsError)
                 {
-                    await Notify.ShowAsync("Ошибка", "Не удалось создать папку", NotifyType.Error);
                     Dirs.Remove(dir);
+                    await Notify.ShowAsync("Ошибка", create.Error, NotifyType.Error);
                     return true;
                 }
 
@@ -69,6 +69,7 @@ public partial class RootViewModel : ObservableValidator
                 dir.DirId = value.DirId;
 
                 await RefreshStructure();
+                await Notify.ShowAsync("Успех", "Папка успешно создана", NotifyType.Success, 2);
                 return true;
                 //todo: add folder to tree
             }

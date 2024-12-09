@@ -111,6 +111,10 @@ public static class ApiHelper
             return new Result<ReturnDirDto>(content);
         }
 
-        return new Result<ReturnDirDto>("Ошибка сервера");
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<ReturnDirDto>("Ошибка сервера");
+        else
+            return new Result<ReturnDirDto>(error);
     }
 }

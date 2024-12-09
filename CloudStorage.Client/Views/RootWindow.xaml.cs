@@ -42,5 +42,11 @@ namespace CloudStorage.Client.Views
         {
             await viewModel.LostFocusEditable();
         }
+
+        private async void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+                await viewModel.LostFocusEditable();
+        }
     }
 }
