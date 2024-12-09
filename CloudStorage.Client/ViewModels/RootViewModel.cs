@@ -48,6 +48,10 @@ public partial class RootViewModel : ObservableValidator
 
     public async Task DeleteFile(ReturnFileDto file)
     {
+        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить файл \"{file.Name}\"?", "Удалить", "Нет");
+        if (!confirm)
+            return;
+
         var result = await ApiHelper.DeleteFile(file.Id);
         if (result.IsError)
         {
