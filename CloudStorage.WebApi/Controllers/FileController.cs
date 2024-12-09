@@ -20,6 +20,29 @@ public class FileController : BaseApiController
         _context = context;
     }
 
+    [HttpDelete("{fileId}"), Authorize]
+    public async Task<IActionResult> DeleteFile(int fileId)
+    {
+        var file = await _context.Files.FindAsync(fileId);
+        if (file == null)
+            return BadRequest("Данный файл несуществует");
+
+        var user = await _context.Users.FindAsync(GetIdByJwt());
+        if(user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        if(rootId != user.RootDirId)
+            return BadRequest("Вы не можете использовать чужой файл");
+
+        var path = await GetPath(file.DirectoryId, _context);
+        CloudProvider.DeleteFile(path, file.Name);
+
+        _context.Files.Remove(file);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
     [HttpPost, Authorize]
     public async Task<IActionResult> LoadFile([FromForm] FilesDto model)
     {
@@ -46,7 +69,7 @@ public class FileController : BaseApiController
         var path = await CloudProvider.LoadFileAsync(dirPath, model.File);
         if (path != null)
         {
-            var file = new File { Directory = dir, Name = model.File.FileName, Path = path, Size = model.File.Length };
+            var file = new File { Directory = dir, Name = model.File.FileName, Size = model.File.Length };
             
             await _context.Files.AddAsync(file);
             await _context.SaveChangesAsync();

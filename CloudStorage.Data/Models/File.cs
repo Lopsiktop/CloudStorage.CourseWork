@@ -9,8 +9,6 @@ public partial class File
 
     public string Name { get; set; } = null!;
 
-    public string Path { get; set; } = null!;
-
     public decimal Size { get; set; }
 
     public int DirectoryId { get; set; }

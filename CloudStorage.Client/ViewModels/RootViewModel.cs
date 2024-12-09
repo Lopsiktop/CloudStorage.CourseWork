@@ -46,6 +46,19 @@ public partial class RootViewModel : ObservableValidator
         return false;
     }
 
+    public async Task DeleteFile(ReturnFileDto file)
+    {
+        var result = await ApiHelper.DeleteFile(file.Id);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        Files.Remove(file);
+        await Notify.ShowAsync("Успех", "Файл успешно удален", NotifyType.Success, 2);
+    }
+
     public async Task LoadFiles(string[] files)
     {
         var result = await ApiHelper.LoadFiles(files[0], CurrentDir.DirId);

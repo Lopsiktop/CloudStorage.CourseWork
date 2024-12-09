@@ -147,4 +147,17 @@ public static class ApiHelper
             }
         }
     }
+
+    public static async Task<Result<bool>> DeleteFile(int fileID)
+    {
+        var response = await _http.DeleteAsync(_url + "File/" + fileID.ToString());
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
 }

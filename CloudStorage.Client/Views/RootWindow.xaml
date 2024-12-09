@@ -164,7 +164,7 @@
                                                 </StackPanel>
                                             </MenuItem.Header>
                                         </MenuItem>
-                                        <MenuItem>
+                                        <MenuItem Click="MenuItem_Click" CommandParameter="{Binding}">
                                             <MenuItem.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <md:PackIcon Kind="Delete"/>
