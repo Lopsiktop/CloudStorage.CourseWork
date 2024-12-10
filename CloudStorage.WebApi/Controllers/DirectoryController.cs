@@ -20,6 +20,30 @@ namespace CloudStorage.WebApi.Controllers
             _context = context;
         }
 
+        [HttpGet("Download/{id}")]
+        public async Task<IActionResult> DownloadDirectory(int id)
+        {
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user == null)
+                return BadRequest();
+
+            var dir = await _context.Directories.FindAsync(id);
+            if (dir == null)
+                return BadRequest();
+
+            var rootId = await GetRootDirId(dir.Id, _context);
+            if (user.RootDirId != rootId)
+                return BadRequest("Данный файл не ваш");
+
+            var dirPath = await GetPath(dir.Id, _context);
+            var folderPath = CloudProvider.GetFolderPath(dirPath);
+            var archive = CloudProvider.CreateArchive(folderPath);
+
+            var stream = System.IO.File.OpenRead(archive);
+
+            return File(stream, "application/octet-stream", dir.Name + ".zip");
+        }
+
         [HttpPost("Rename"), Authorize]
         public async Task<IActionResult> RenameDirectory(RenameDirectoryDto model)
         {

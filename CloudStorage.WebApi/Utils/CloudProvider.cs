@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Validations;
+using System.IO.Compression;
 
 namespace CloudStorage.WebApi.Utils;
 
@@ -79,6 +80,23 @@ public static class CloudProvider
     public static string GetFilePath(string dirPath, string fileName)
     {
         return Path.Combine(Environment.CurrentDirectory, "Cloud", dirPath, fileName);
+    }
+
+    public static string GetFolderPath(string dirPath)
+    {
+        return Path.Combine(Environment.CurrentDirectory, "Cloud", dirPath);
+    }
+
+    public static string CreateArchive(string folderPath)
+    {
+        var folderName = Path.GetFileName(folderPath);
+        var archivePath = Path.Combine(Environment.CurrentDirectory, "Zips", folderName + ".zip");
+
+        if (File.Exists(archivePath))
+            File.Delete(archivePath);
+
+        ZipFile.CreateFromDirectory(folderPath, archivePath);
+        return archivePath;
     }
 
     public static string GetFullPathByLogin(string login)

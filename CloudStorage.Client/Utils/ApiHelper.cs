@@ -227,4 +227,25 @@ public static class ApiHelper
         else
             return new Result<bool>(error);
     }
+
+    public static async Task<Result<bool>> DownloadFolder(int dirId, string path)
+    {
+        var response = await _http.GetAsync(_url + "Directory/Download/" + dirId.ToString());
+        if (response.IsSuccessStatusCode)
+        {
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using (var fs = new FileStream(path, FileMode.CreateNew))
+            {
+                await stream.CopyToAsync(fs);
+            }
+
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
 }

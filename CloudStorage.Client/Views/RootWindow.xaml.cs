@@ -115,5 +115,14 @@ namespace CloudStorage.Client.Views
 
             await viewModel.DownloadFile(parameter);
         }
+
+        private async void MenuItem_Click_5(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.DownloadDirectory(parameter);
+        }
     }
 }

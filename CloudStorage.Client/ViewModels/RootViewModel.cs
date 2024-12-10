@@ -365,4 +365,22 @@ public partial class RootViewModel : ObservableValidator
             await Notify.ShowAsync("Успех", "Файл успешно загружен", NotifyType.Success);
         }
     }
+
+    public async Task DownloadDirectory(ReturnDirDto folder)
+    {
+        var dialog = new SaveFileDialog();
+        dialog.Filter = "Zip | *.zip";
+        dialog.FileName = folder.DirName + ".zip";
+        if (dialog.ShowDialog() == true)
+        {
+            var result = await ApiHelper.DownloadFolder(folder.DirId, dialog.FileName);
+            if (result.IsError)
+            {
+                await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+                return;
+            }
+
+            await Notify.ShowAsync("Успех", "Папка успешно загружена", NotifyType.Success);
+        }
+    }
 }

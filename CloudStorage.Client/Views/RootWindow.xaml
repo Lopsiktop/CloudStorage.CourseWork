@@ -113,6 +113,15 @@
                                 </Grid>
                                 <ui:FolderGrid.ContextMenu>
                                     <ContextMenu>
+                                        <MenuItem Click="MenuItem_Click_5" CommandParameter="{Binding}">
+                                            <MenuItem.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <md:PackIcon Kind="Download"/>
+                                                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
+                                                </StackPanel>
+                                            </MenuItem.Header>
+                                        </MenuItem>
+                                        <Separator/>
                                         <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
                                             <MenuItem.Header>
                                                 <StackPanel Orientation="Horizontal">
