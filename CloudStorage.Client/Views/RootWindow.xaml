@@ -113,7 +113,7 @@
                                 </Grid>
                                 <ui:FolderGrid.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem>
+                                        <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
                                             <MenuItem.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <md:PackIcon Kind="Rename"/>

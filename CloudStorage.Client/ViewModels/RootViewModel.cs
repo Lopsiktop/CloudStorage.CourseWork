@@ -31,6 +31,7 @@ public partial class RootViewModel : ObservableValidator
     private bool _IsDragging;
 
     public ReturnFileDto OldFile { get; set; }
+    public ReturnDirDto OldDir { get; set; }
 
     public RootViewModel()
     {
@@ -82,6 +83,24 @@ public partial class RootViewModel : ObservableValidator
         await Notify.ShowAsync("Успех", "Папка успешно удалена", NotifyType.Success, 2);
     }
 
+    public async Task RenameDirectory(ReturnDirDto dir)
+    {
+        if (OldDir.DirName == dir.DirName)
+        {
+            dir.IsEditing = false;
+            return;
+        }
+
+        var result = await ApiHelper.RenameDirectory(dir.DirId, dir.DirName);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        dir.IsEditing = false;
+    }
+
     public async Task RenameFile(ReturnFileDto file)
     {
         if (OldFile.Name == file.Name)
@@ -123,10 +142,10 @@ public partial class RootViewModel : ObservableValidator
                 await Notify.ShowAsync("Ошибка", "Вы должны указать имя для папки", NotifyType.Error);
                 return false;
             }
-            dir.IsEditing = false;
             
             if(dir.DirId == -1)
             {
+                dir.IsEditing = false;
                 var create = await ApiHelper.CreateDirectory(new CreateDirDto(dir.DirName, CurrentDir.DirId));
                 if (create.IsError)
                 {
@@ -144,7 +163,7 @@ public partial class RootViewModel : ObservableValidator
             }
             else
             {
-                //todo: edit dir using api
+                await RenameDirectory(dir);
             }
         }
 

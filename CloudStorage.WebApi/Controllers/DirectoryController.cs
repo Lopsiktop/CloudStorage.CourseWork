@@ -20,6 +20,41 @@ namespace CloudStorage.WebApi.Controllers
             _context = context;
         }
 
+        [HttpPost("Rename"), Authorize]
+        public async Task<IActionResult> RenameDirectory(RenameDirectoryDto model)
+        {
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user == null)
+                return BadRequest();
+
+            var dir = await _context.Directories.FindAsync(model.DirId);
+            if (dir == null)
+                return BadRequest();
+
+            var rootId = await GetRootDirId(dir.Id, _context);
+            if (user.RootDirId != rootId)
+                return BadRequest("Данный файл не ваш");
+
+            if (dir.Name == model.Name)
+                return BadRequest("Вы не можете поменять имя на то что уже стоит");
+
+            var path = await GetPath(dir.Id, _context);
+
+            try
+            {
+                CloudProvider.RenameDirectory(path, model.Name);
+            }
+            catch
+            {
+                return BadRequest("Неправильное название файла");
+            }
+
+            dir.Name = model.Name;
+            await _context.SaveChangesAsync();
+
+            return Ok(new ReturnDirDto(dir.Id, dir.Name));
+        }
+
         [HttpDelete("{dirId}"), Authorize]
         public async Task<IActionResult> DeleteDirectory(int dirId)
         {

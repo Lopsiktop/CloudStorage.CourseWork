@@ -189,4 +189,20 @@ public static class ApiHelper
         else
             return new Result<ReturnFileDto>(error);
     }
+
+    public static async Task<Result<ReturnDirDto>> RenameDirectory(int dirId, string name)
+    {
+        var response = await _http.PostAsJsonAsync(_url + "Directory/Rename", new RenameDirectoryDto(dirId, name));
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<ReturnDirDto>();
+            return new Result<ReturnDirDto>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<ReturnDirDto>("Ошибка сервера");
+        else
+            return new Result<ReturnDirDto>(error);
+    }
 }

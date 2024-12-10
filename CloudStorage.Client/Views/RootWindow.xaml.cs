@@ -96,5 +96,15 @@ namespace CloudStorage.Client.Views
             parameter.IsEditing = true;
             viewModel.OldFile = new ReturnFileDto(parameter.Id, parameter.Name, parameter.Size);
         }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            parameter.IsEditing = true;
+            viewModel.OldDir = new ReturnDirDto(parameter.DirId, parameter.DirName);
+        }
     }
 }

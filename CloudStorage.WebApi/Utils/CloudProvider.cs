@@ -1,4 +1,6 @@
-﻿namespace CloudStorage.WebApi.Utils;
+﻿using Microsoft.OpenApi.Validations;
+
+namespace CloudStorage.WebApi.Utils;
 
 public static class CloudProvider
 {
@@ -62,6 +64,16 @@ public static class CloudProvider
         var newPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, newName);
         if (File.Exists(fullPath))
             File.Move(fullPath, newPath);
+    }
+
+    public static void RenameDirectory(string path, string newName)
+    {
+        var dir = Path.GetFileName(path);
+        var npath = Path.Combine(path.Remove(path.Length - dir.Length, dir.Length), newName);
+        var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path);
+        var newPath = Path.Combine(Environment.CurrentDirectory, "Cloud", npath);
+        if (Directory.Exists(fullPath))
+            Directory.Move(fullPath, newPath);
     }
 
     public static string GetFullPathByLogin(string login)
