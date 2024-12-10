@@ -1,5 +1,7 @@
 # Гайд по установке облачного хранилища на локальный компьютер
 
+P.S. Я изменил gitignore теперь пункты 4 и 5 можно пропустить
+
 1. Распаковать архив
 2. Открыть проект в Visual Studio 2022
 3. Зайти в appsettings.json проекта CloudStorage.WebApi и поменять "ConnectionStrings" настройку "SqlServer", указав вместо "Server=DESKTOP-C0LRN55;" - "Server={наименование вашего сервера}"
