@@ -43,6 +43,12 @@ public static class CloudProvider
         }
     }
 
+    public static void DeleteDirectory(string path)
+    {
+        var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path);
+        if (Directory.Exists(fullPath))
+            Directory.Delete(fullPath, true);
+    }
     public static void DeleteFile(string path, string fileName)
     {
         var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, fileName);

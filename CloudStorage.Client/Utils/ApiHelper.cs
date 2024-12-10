@@ -160,4 +160,17 @@ public static class ApiHelper
         else
             return new Result<bool>(error);
     }
+
+    public static async Task<Result<bool>> DeleteDirectory(int dirId)
+    {
+        var response = await _http.DeleteAsync(_url + "Directory/" + dirId.ToString());
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
 }

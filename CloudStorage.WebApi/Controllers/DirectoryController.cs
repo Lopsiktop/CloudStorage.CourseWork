@@ -20,6 +20,42 @@ namespace CloudStorage.WebApi.Controllers
             _context = context;
         }
 
+        [HttpDelete("{dirId}"), Authorize]
+        public async Task<IActionResult> DeleteDirectory(int dirId)
+        {
+            var dir = await _context.Directories.FindAsync(dirId);
+            if (dir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user == null)
+                return BadRequest("Ошибка авторизации");
+
+            var rootId = await GetRootDirId(dirId, _context);
+            if (rootId != user.RootDirId)
+                return BadRequest("Вы не можете использовать чужую папку");
+
+            var path = await GetPath(dirId, _context);
+            CloudProvider.DeleteDirectory(path);
+
+            _context.Directories.Remove(dir);
+            await _context.SaveChangesAsync();
+
+            await DeleteChildren(dirId);
+
+            return NoContent();
+        }
+
+        private async Task DeleteChildren(int dirId)
+        {
+            var children = await _context.Directories.Where(x => x.ParentId == dirId).ToListAsync();
+            _context.Directories.RemoveRange(children);
+            await _context.SaveChangesAsync();
+
+            foreach (var child in children)
+                await DeleteChildren(child.Id);
+        }
+
         [HttpGet("GetStructure"), Authorize]
         public async Task<IActionResult> GetAllFolders()
         {

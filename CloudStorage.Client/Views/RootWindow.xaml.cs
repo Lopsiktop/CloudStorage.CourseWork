@@ -77,5 +77,14 @@ namespace CloudStorage.Client.Views
 
             await viewModel.DeleteFile(parameter);
         }
+
+        private async void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.DeleteDirectory(parameter);
+        }
     }
 }

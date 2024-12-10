@@ -63,6 +63,23 @@ public partial class RootViewModel : ObservableValidator
         await Notify.ShowAsync("Успех", "Файл успешно удален", NotifyType.Success, 2);
     }
 
+    public async Task DeleteDirectory(ReturnDirDto dir)
+    {
+        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить папку \"{dir.DirName}\" со всем ее содержимым?", "Удалить", "Нет");
+        if (!confirm)
+            return;
+
+        var result = await ApiHelper.DeleteDirectory(dir.DirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        Dirs.Remove(dir);
+        await Notify.ShowAsync("Успех", "Папка успешно удалена", NotifyType.Success, 2);
+    }
+
     public async Task LoadFiles(string[] files)
     {
         var result = await ApiHelper.LoadFiles(files[0], CurrentDir.DirId);

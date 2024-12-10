@@ -30,7 +30,8 @@ public partial class CloudStorageContext : DbContext
         {
             entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
                 .HasForeignKey(d => d.ParentId)
-                .HasConstraintName("FK_Directories_Directories");
+                .HasConstraintName("FK_Directories_Directories")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<File>(entity =>
@@ -39,8 +40,8 @@ public partial class CloudStorageContext : DbContext
 
             entity.HasOne(d => d.Directory).WithMany(p => p.Files)
                 .HasForeignKey(d => d.DirectoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Files_Directories");
+                .HasConstraintName("FK_Files_Directories")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Link>(entity =>
