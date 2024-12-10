@@ -3,6 +3,7 @@ using CloudStorage.Client.UI.UIHelpers;
 using CloudStorage.Client.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Xml.Linq;
@@ -346,5 +347,22 @@ public partial class RootViewModel : ObservableValidator
 
         foreach (var item in dir.Dirs)
             AddFolder(newNode, item);
+    }
+
+    public async Task DownloadFile(ReturnFileDto file)
+    {
+        var dialog = new SaveFileDialog();
+        dialog.FileName = file.Name;
+        if(dialog.ShowDialog() == true)
+        {
+            var result = await ApiHelper.DownloadFile(file.Id, dialog.FileName);
+            if (result.IsError)
+            {
+                await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+                return;
+            }
+
+            await Notify.ShowAsync("Успех", "Файл успешно загружен", NotifyType.Success);
+        }
     }
 }

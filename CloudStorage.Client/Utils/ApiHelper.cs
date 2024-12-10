@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Policy;
 using System.Windows.Controls;
+using System.Xml.Linq;
 
 namespace CloudStorage.Client.Utils;
 
@@ -204,5 +205,26 @@ public static class ApiHelper
             return new Result<ReturnDirDto>("Ошибка сервера");
         else
             return new Result<ReturnDirDto>(error);
+    }
+
+    public static async Task<Result<bool>> DownloadFile(int fileId, string path)
+    {
+        var response = await _http.GetAsync(_url + "File/Download/" + fileId.ToString());
+        if (response.IsSuccessStatusCode)
+        {
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using (var fs = new FileStream(path, FileMode.CreateNew))
+            {
+                await stream.CopyToAsync(fs);
+            }
+
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
     }
 }

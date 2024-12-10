@@ -106,5 +106,14 @@ namespace CloudStorage.Client.Views
             parameter.IsEditing = true;
             viewModel.OldDir = new ReturnDirDto(parameter.DirId, parameter.DirName);
         }
+
+        private async void MenuItem_Click_4(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnFileDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.DownloadFile(parameter);
+        }
     }
 }

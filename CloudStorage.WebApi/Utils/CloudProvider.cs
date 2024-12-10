@@ -76,6 +76,11 @@ public static class CloudProvider
             Directory.Move(fullPath, newPath);
     }
 
+    public static string GetFilePath(string dirPath, string fileName)
+    {
+        return Path.Combine(Environment.CurrentDirectory, "Cloud", dirPath, fileName);
+    }
+
     public static string GetFullPathByLogin(string login)
     {
         var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Root_{login}");

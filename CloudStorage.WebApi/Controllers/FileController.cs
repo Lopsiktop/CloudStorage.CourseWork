@@ -20,6 +20,29 @@ public class FileController : BaseApiController
         _context = context;
     }
 
+    [HttpGet("Download/{id}")]
+    public async Task<IActionResult> DownloadFile(int id)
+    {
+        var user = await _context.Users.FindAsync(GetIdByJwt());
+        if (user == null)
+            return BadRequest();
+
+        var file = await _context.Files.FindAsync(id);
+        if (file == null)
+            return BadRequest();
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        if (user.RootDirId != rootId)
+            return BadRequest("Данный файл не ваш");
+
+        var dirPath = await GetPath(file.DirectoryId, _context);
+        var filePath = CloudProvider.GetFilePath(dirPath, file.Name);
+
+        var stream = System.IO.File.OpenRead(filePath);
+
+        return File(stream, "application/octet-stream", file.Name);
+    }
+
     [HttpPost("Rename"), Authorize]
     public async Task<IActionResult> RenameFile(RenameFileDto model)
     {
