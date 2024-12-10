@@ -56,6 +56,14 @@ public static class CloudProvider
             File.Delete(fullPath);
     }
 
+    public static void RenameFile(string path, string fileName, string newName)
+    {
+        var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, fileName);
+        var newPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, newName);
+        if (File.Exists(fullPath))
+            File.Move(fullPath, newPath);
+    }
+
     public static string GetFullPathByLogin(string login)
     {
         var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Root_{login}");

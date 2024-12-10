@@ -173,4 +173,20 @@ public static class ApiHelper
         else
             return new Result<bool>(error);
     }
+
+    public static async Task<Result<ReturnFileDto>> RenameFile(int fileId, string name)
+    {
+        var response = await _http.PostAsJsonAsync(_url + "File/Rename", new RenameFileDto(fileId, name));
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<ReturnFileDto>();
+            return new Result<ReturnFileDto>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<ReturnFileDto>("Ошибка сервера");
+        else
+            return new Result<ReturnFileDto>(error);
+    }
 }

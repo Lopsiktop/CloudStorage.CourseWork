@@ -156,7 +156,7 @@
                                 </Grid>
                                 <ui:FileGrid.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem>
+                                        <MenuItem Click="MenuItem_Click_2" CommandParameter="{Binding}">
                                             <MenuItem.Header>
                                                 <StackPanel Orientation="Horizontal">
                                                     <md:PackIcon Kind="Rename"/>

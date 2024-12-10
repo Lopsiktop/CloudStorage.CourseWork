@@ -30,6 +30,8 @@ public partial class RootViewModel : ObservableValidator
     [ObservableProperty]
     private bool _IsDragging;
 
+    public ReturnFileDto OldFile { get; set; }
+
     public RootViewModel()
     {
         var node = new ItemNode { Name = "Диск", Type = NodeType.Disk };
@@ -80,6 +82,24 @@ public partial class RootViewModel : ObservableValidator
         await Notify.ShowAsync("Успех", "Папка успешно удалена", NotifyType.Success, 2);
     }
 
+    public async Task RenameFile(ReturnFileDto file)
+    {
+        if (OldFile.Name == file.Name)
+        {
+            file.IsEditing = false;
+            return;
+        }
+
+        var result = await ApiHelper.RenameFile(file.Id, file.Name);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        file.IsEditing = false;
+    }
+
     public async Task LoadFiles(string[] files)
     {
         var result = await ApiHelper.LoadFiles(files[0], CurrentDir.DirId);
@@ -128,7 +148,15 @@ public partial class RootViewModel : ObservableValidator
             }
         }
 
-        //todo: rename for file
+        var file = Files.FirstOrDefault(x => x.IsEditing);
+        if(file != null)
+        {
+            //editing
+            if(file.Id != -1)
+            {
+                await RenameFile(file);
+            }
+        }
 
         return true;
     }

@@ -20,6 +20,41 @@ public class FileController : BaseApiController
         _context = context;
     }
 
+    [HttpPost("Rename"), Authorize]
+    public async Task<IActionResult> RenameFile(RenameFileDto model)
+    {
+        var user = await _context.Users.FindAsync(GetIdByJwt());
+        if (user == null)
+            return BadRequest();
+
+        var file = await _context.Files.FindAsync(model.FileId);
+        if (file == null)
+            return BadRequest();
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        if (user.RootDirId != rootId)
+            return BadRequest("Данный файл не ваш");
+
+        if (file.Name == model.Name)
+            return BadRequest("Вы не можете поменять имя на то что уже стоит");
+
+        var path = await GetPath(file.DirectoryId, _context);
+        
+        try
+        {
+            CloudProvider.RenameFile(path, file.Name, model.Name);
+        }
+        catch
+        {
+            return BadRequest("Неправильное название файла");
+        }
+
+        file.Name = model.Name;
+        await _context.SaveChangesAsync();
+
+        return Ok(new ReturnFileDto(file.Id, file.Name, file.Size));
+    }
+
     [HttpDelete("{fileId}"), Authorize]
     public async Task<IActionResult> DeleteFile(int fileId)
     {
