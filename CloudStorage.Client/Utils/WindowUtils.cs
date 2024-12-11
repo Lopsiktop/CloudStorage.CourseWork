@@ -16,17 +16,19 @@ public static class WindowUtils
         var exists = App.Current.Windows.OfType<T>().FirstOrDefault();
         if (exists != null)
         {
-            exists.Show();
-            return;
+            exists.Closing -= Window_Closing;
+            exists.Close();
         }
 
         var window = new T();
         window.Owner = ActiveWindow;
-        window.Closing += (s, e) =>
-        {
-            RootWindow.Close();
-        };
+        window.Closing += Window_Closing;
         window.Show();
+    }
+
+    private static void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        RootWindow.Close();
     }
 
     public static void ShowDialogWindow<T>()
