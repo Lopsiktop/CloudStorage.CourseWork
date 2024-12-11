@@ -141,16 +141,16 @@ public class FileController : BaseApiController
     [HttpGet("GetFilesByDirId/{dirId}"), Authorize]
     public async Task<IActionResult> GetFilesByDirId(int dirId)
     {
-        var dir = await _context.Directories.Include(x => x.Files).FirstOrDefaultAsync(x => x.Id == dirId);
+        var dir = await _context.Directories.Include(x => x.FileDirectories).FirstOrDefaultAsync(x => x.Id == dirId);
         if (dir == null)
             return BadRequest("Данная папка несуществует");
 
         var rootId = await GetRootDirId(dirId, _context);
         var user = await _context.Users.FindAsync(GetIdByJwt());
-        if (user.RootDirId != rootId)
+        if (user.RootDirId != rootId && user.TrashDirId != rootId)
             return BadRequest("Данная папка не ваша");
 
-        var files = dir.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size));
+        var files = dir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size));
         return Ok(files);
     }
 }

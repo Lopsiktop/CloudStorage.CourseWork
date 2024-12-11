@@ -13,7 +13,11 @@ public partial class File
 
     public int DirectoryId { get; set; }
 
+    public int? OldDirId { get; set; }
+
     public virtual Directory Directory { get; set; } = null!;
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
+
+    public virtual Directory? OldDir { get; set; }
 }

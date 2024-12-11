@@ -30,7 +30,7 @@ namespace CloudStorage.WebApi.Controllers
                 return Unauthorized();
 
             var user = await _context.Users.Include(x => x.RootDir)
-                .ThenInclude(x => x.Files)
+                .ThenInclude(x => x.FileDirectories)
                 .Include(x => x.RootDir).ThenInclude(x => x.InverseParent)
                 .Include(x => x.TrashDir)
                 .AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -40,7 +40,7 @@ namespace CloudStorage.WebApi.Controllers
                     new ReturnRootDirDto(
                         user.RootDir.Id, 
                         user.RootDir.Name,
-                        user.RootDir.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)), 
+                        user.RootDir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)), 
                         user.RootDir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name))
                     ),
                     new ReturnDirDto(user.TrashDir.Id, user.TrashDir.Name)

@@ -20,6 +20,32 @@ namespace CloudStorage.WebApi.Controllers
             _context = context;
         }
 
+        [HttpPost("Bin/{dirId}")] 
+        public async Task<IActionResult> MoveToBin(int dirId)
+        {
+            var dir = await _context.Directories.FindAsync(dirId);
+            if (dir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var user = await _context.Users.Include(x => x.TrashDir).FirstOrDefaultAsync(x => x.Id == GetIdByJwt());
+            if (user == null)
+                return BadRequest("Ошибка авторизации");
+
+            var rootId = await GetRootDirId(dirId, _context);
+            if (rootId != user.RootDirId)
+                return BadRequest("Вы не можете использовать чужую папку");
+
+            var dirPath = await GetPath(dir.Id, _context);
+            var path = CloudProvider.GetFolderPath(dirPath);
+            CloudProvider.MoveDirectoryToBin(user.TrashDir!.Name, path);
+
+            dir.OldDirId = dir.ParentId;
+            dir.ParentId = user.TrashDirId;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpGet("Download/{id}")]
         public async Task<IActionResult> DownloadDirectory(int id)
         {
@@ -176,7 +202,7 @@ namespace CloudStorage.WebApi.Controllers
 
             var rootId = await GetRootDirId(dirId, _context);
             var user = await _context.Users.FindAsync(GetIdByJwt());
-            if (user.RootDirId != rootId)
+            if (user.RootDirId != rootId && user.TrashDirId != rootId)
                 return BadRequest("Данная папка не ваша");
 
             var dirs = dir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name));

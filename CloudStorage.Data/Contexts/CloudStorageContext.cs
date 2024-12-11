@@ -30,6 +30,10 @@ public partial class CloudStorageContext : DbContext
     {
         modelBuilder.Entity<Directory>(entity =>
         {
+            entity.HasOne(d => d.OldDir).WithMany(p => p.InverseOldDir)
+                .HasForeignKey(d => d.OldDirId)
+                .HasConstraintName("FK_Directories_Directories1");
+
             entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK_Directories_Directories");
@@ -39,9 +43,13 @@ public partial class CloudStorageContext : DbContext
         {
             entity.Property(e => e.Size).HasColumnType("decimal(18, 6)");
 
-            entity.HasOne(d => d.Directory).WithMany(p => p.Files)
+            entity.HasOne(d => d.Directory).WithMany(p => p.FileDirectories)
                 .HasForeignKey(d => d.DirectoryId)
                 .HasConstraintName("FK_Files_Directories");
+
+            entity.HasOne(d => d.OldDir).WithMany(p => p.FileOldDirs)
+                .HasForeignKey(d => d.OldDirId)
+                .HasConstraintName("FK_Files_Directories1");
         });
 
         modelBuilder.Entity<History>(entity =>

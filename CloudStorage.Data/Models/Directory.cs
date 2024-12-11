@@ -11,11 +11,19 @@ public partial class Directory
 
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<File> Files { get; set; } = new List<File>();
+    public int? OldDirId { get; set; }
+
+    public virtual ICollection<File> FileDirectories { get; set; } = new List<File>();
+
+    public virtual ICollection<File> FileOldDirs { get; set; } = new List<File>();
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
 
+    public virtual ICollection<Directory> InverseOldDir { get; set; } = new List<Directory>();
+
     public virtual ICollection<Directory> InverseParent { get; set; } = new List<Directory>();
+
+    public virtual Directory? OldDir { get; set; }
 
     public virtual Directory? Parent { get; set; }
 

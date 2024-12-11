@@ -27,6 +27,11 @@ namespace CloudStorage.Client.Views
         {
             viewModel.TreeValue = (ItemNode)e.NewValue;
             await viewModel.TreeValueChanged();
+
+            if (viewModel.TreeValue.Type == NodeType.Disk)
+                DiskTab.IsSelected = true;
+            else if(viewModel.TreeValue.Type == NodeType.Trash)
+                BinTab.IsSelected = true;
         }
 
         private async void Grid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -84,7 +89,7 @@ namespace CloudStorage.Client.Views
             if (parameter == null)
                 return;
 
-            await viewModel.DeleteDirectory(parameter);
+            await viewModel.MoveDirToBin(parameter);
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)

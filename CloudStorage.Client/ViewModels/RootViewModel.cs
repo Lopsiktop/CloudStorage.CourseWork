@@ -52,6 +52,23 @@ public partial class RootViewModel : ObservableValidator
         return false;
     }
 
+    public async Task MoveDirToBin(ReturnDirDto dir)
+    {
+        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить папку \"{dir.DirName}\" со всем ее содержимым?", "Удалить", "Нет");
+        if (!confirm)
+            return;
+
+        var result = await ApiHelper.MoveDirToBin(dir.DirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        await RefreshStructure();
+        Dirs.Remove(dir);
+    }
+
     public async Task DeleteFile(ReturnFileDto file)
     {
         var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить файл \"{file.Name}\"?", "Удалить", "Нет");

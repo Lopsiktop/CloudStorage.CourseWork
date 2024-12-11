@@ -67,6 +67,13 @@ public static class CloudProvider
         }
     }
 
+    public static void MoveDirectoryToBin(string trash, string oldPath)
+    {
+        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, Guid.NewGuid().ToString());
+        if (Directory.Exists(oldPath))
+            Directory.Move(oldPath, path);
+    }
+
     public static void DeleteDirectory(string path)
     {
         defineFolders();
