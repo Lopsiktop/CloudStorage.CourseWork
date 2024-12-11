@@ -5,18 +5,29 @@ namespace CloudStorage.WebApi.Utils;
 
 public static class CloudProvider
 {
+    private static void defineFolders()
+    {
+        var cloud = Path.Combine(Environment.CurrentDirectory, "Cloud");
+        if(!Directory.Exists(cloud))
+            Directory.CreateDirectory(cloud);
+
+        var zips = Path.Combine(Environment.CurrentDirectory, "Zips");
+        if(!Directory.Exists(zips))
+            Directory.CreateDirectory(zips);
+    }
+
     public static void CreateUserDir(string login)
     {
-        var dirPath = Path.Combine(Environment.CurrentDirectory, "Cloud");
-        if (!System.IO.Directory.Exists(dirPath))
-            System.IO.Directory.CreateDirectory(dirPath);
+        defineFolders();
 
-        var rootPath = Path.Combine(dirPath, $"Root_{login}");
-        System.IO.Directory.CreateDirectory(rootPath);
+        var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Root_{login}");
+        Directory.CreateDirectory(rootPath);
     }
 
     public static bool CreateFolder(string pathn)
     {
+        defineFolders();
+
         var path = Path.Combine(Environment.CurrentDirectory, "Cloud", pathn);
         try
         {
@@ -31,6 +42,8 @@ public static class CloudProvider
 
     public static async Task<string?> LoadFileAsync(string pathToDir, IFormFile file)
     {
+        defineFolders();
+
         try
         {
             var path = Path.Combine(Environment.CurrentDirectory, "Cloud", pathToDir, file.FileName);
@@ -48,12 +61,16 @@ public static class CloudProvider
 
     public static void DeleteDirectory(string path)
     {
+        defineFolders();
+
         var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path);
         if (Directory.Exists(fullPath))
             Directory.Delete(fullPath, true);
     }
     public static void DeleteFile(string path, string fileName)
     {
+        defineFolders();
+
         var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, fileName);
         if (File.Exists(fullPath)) 
             File.Delete(fullPath);
@@ -61,6 +78,8 @@ public static class CloudProvider
 
     public static void RenameFile(string path, string fileName, string newName)
     {
+        defineFolders();
+
         var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, fileName);
         var newPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path, newName);
         if (File.Exists(fullPath))
@@ -69,6 +88,8 @@ public static class CloudProvider
 
     public static void RenameDirectory(string path, string newName)
     {
+        defineFolders();
+
         var dir = Path.GetFileName(path);
         var npath = Path.Combine(path.Remove(path.Length - dir.Length, dir.Length), newName);
         var fullPath = Path.Combine(Environment.CurrentDirectory, "Cloud", path);
@@ -79,16 +100,22 @@ public static class CloudProvider
 
     public static string GetFilePath(string dirPath, string fileName)
     {
+        defineFolders();
+
         return Path.Combine(Environment.CurrentDirectory, "Cloud", dirPath, fileName);
     }
 
     public static string GetFolderPath(string dirPath)
     {
+        defineFolders();
+
         return Path.Combine(Environment.CurrentDirectory, "Cloud", dirPath);
     }
 
     public static string CreateArchive(string folderPath)
     {
+        defineFolders();
+
         var folderName = Path.GetFileName(folderPath);
         var archivePath = Path.Combine(Environment.CurrentDirectory, "Zips", folderName + ".zip");
 
@@ -101,6 +128,8 @@ public static class CloudProvider
 
     public static string GetFullPathByLogin(string login)
     {
+        defineFolders();
+
         var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Root_{login}");
         return rootPath;
     }
