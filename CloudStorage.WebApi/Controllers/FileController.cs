@@ -153,4 +153,30 @@ public class FileController : BaseApiController
         var files = dir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size));
         return Ok(files);
     }
+
+    [HttpPost("Bin/{fileId}")]
+    public async Task<IActionResult> MoveToBin(int fileId)
+    {
+        var file = await _context.Files.FindAsync(fileId);
+        if (file == null)
+            return BadRequest("Данный файл несуществует");
+
+        var user = await _context.Users.Include(x => x.TrashDir).FirstOrDefaultAsync(x => x.Id == GetIdByJwt());
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        if (rootId != user.RootDirId)
+            return BadRequest("Вы не можете использовать чужой файл");
+
+        var dirPath = await GetPath(file.DirectoryId, _context);
+        var path = CloudProvider.GetFilePath(dirPath, file.Name);
+        CloudProvider.MoveFileToBin(user.TrashDir!.Name, path);
+
+        file.OldDirId = file.DirectoryId;
+        file.DirectoryId = user.TrashDirId ?? 0;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

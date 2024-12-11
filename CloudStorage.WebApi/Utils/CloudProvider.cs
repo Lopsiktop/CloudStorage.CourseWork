@@ -66,12 +66,19 @@ public static class CloudProvider
             return null;
         }
     }
-
+    
     public static void MoveDirectoryToBin(string trash, string oldPath)
     {
         var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, Guid.NewGuid().ToString());
         if (Directory.Exists(oldPath))
             Directory.Move(oldPath, path);
+    }
+    public static void MoveFileToBin(string trash, string oldPath)
+    {
+        var ext = Path.GetExtension(oldPath);
+        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, Guid.NewGuid().ToString() + ext);
+        if (File.Exists(oldPath))
+            File.Move(oldPath, path);
     }
 
     public static void DeleteDirectory(string path)

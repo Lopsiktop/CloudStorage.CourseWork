@@ -30,8 +30,10 @@ namespace CloudStorage.Client.Views
 
             if (viewModel.TreeValue.Type == NodeType.Disk)
                 DiskTab.IsSelected = true;
-            else if(viewModel.TreeValue.Type == NodeType.Trash)
+            else if (viewModel.TreeValue.Type == NodeType.Trash)
                 BinTab.IsSelected = true;
+            else if (viewModel.TreeValue.Type == NodeType.Folder)
+                DiskTab.IsSelected = true;
         }
 
         private async void Grid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -80,7 +82,7 @@ namespace CloudStorage.Client.Views
             if (parameter == null)
                 return;
 
-            await viewModel.DeleteFile(parameter);
+            await viewModel.MoveFileToBin(parameter);
         }
 
         private async void MenuItem_Click_1(object sender, RoutedEventArgs e)
