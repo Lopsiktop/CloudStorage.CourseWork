@@ -67,18 +67,66 @@ public static class CloudProvider
         }
     }
     
-    public static void MoveDirectoryToBin(string trash, string oldPath)
+    public static string MoveDirectoryToBin(string trash, string oldPath)
     {
-        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, Guid.NewGuid().ToString());
+        var name = Guid.NewGuid().ToString();
+        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, name);
         if (Directory.Exists(oldPath))
             Directory.Move(oldPath, path);
+
+        return name;
     }
-    public static void MoveFileToBin(string trash, string oldPath)
+    public static string MoveFileToBin(string trash, string oldPath)
     {
         var ext = Path.GetExtension(oldPath);
-        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, Guid.NewGuid().ToString() + ext);
+        var name = Guid.NewGuid().ToString() + ext;
+        var path = Path.Combine(Environment.CurrentDirectory, "Cloud", trash, name);
         if (File.Exists(oldPath))
             File.Move(oldPath, path);
+
+        return name;
+    }
+
+    public static string? ReturnFileFromBin(string trashPath, string newPath)
+    {
+        if(File.Exists(trashPath))
+        {
+            if (File.Exists(newPath))
+            {
+                var name = Guid.NewGuid().ToString() + Path.GetExtension(newPath);
+                var fileName = Path.GetFileName(newPath);
+                var path = Path.Combine(newPath.Remove(newPath.Length - fileName.Length, fileName.Length), name);
+                File.Move(trashPath, path);
+                return name;
+            }
+
+            var defName = Path.GetFileName(newPath);
+            File.Move(trashPath, newPath);
+            return defName;
+        }
+
+        return null;
+    }
+
+    public static string? ReturnDirectoryFromBin(string trashPath, string newPath)
+    {
+        if (Directory.Exists(trashPath))
+        {
+            if (Directory.Exists(newPath))
+            {
+                var name = Guid.NewGuid().ToString();
+                var fileName = Path.GetFileName(newPath);
+                var path = Path.Combine(newPath.Remove(newPath.Length - fileName.Length, fileName.Length), name);
+                Directory.Move(trashPath, path);
+                return name;
+            }
+
+            var defName = Path.GetFileName(newPath);
+            Directory.Move(trashPath, newPath);
+            return defName;
+        }
+
+        return null;
     }
 
     public static void DeleteDirectory(string path)

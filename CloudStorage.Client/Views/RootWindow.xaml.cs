@@ -131,5 +131,23 @@ namespace CloudStorage.Client.Views
 
             await viewModel.DownloadDirectory(parameter);
         }
+
+        private async void RefreshFileClick(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnFileDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.RefreshFileFromTrash(parameter);
+        }
+
+        private async void RefreshFolderClick(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.RefreshFolderFromTrash(parameter);
+        }
     }
 }

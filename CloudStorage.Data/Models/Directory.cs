@@ -13,6 +13,8 @@ public partial class Directory
 
     public int? OldDirId { get; set; }
 
+    public string? TrashName { get; set; }
+
     public virtual ICollection<File> FileDirectories { get; set; } = new List<File>();
 
     public virtual ICollection<File> FileOldDirs { get; set; } = new List<File>();

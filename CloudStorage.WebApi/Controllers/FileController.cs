@@ -171,10 +171,47 @@ public class FileController : BaseApiController
 
         var dirPath = await GetPath(file.DirectoryId, _context);
         var path = CloudProvider.GetFilePath(dirPath, file.Name);
-        CloudProvider.MoveFileToBin(user.TrashDir!.Name, path);
+        var name = CloudProvider.MoveFileToBin(user.TrashDir!.Name, path);
 
+        file.TrashName = name;
         file.OldDirId = file.DirectoryId;
         file.DirectoryId = user.TrashDirId ?? 0;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpPost("Refresh/{fileId}")]
+    public async Task<IActionResult> RefreshFromBin(int fileId)
+    {
+        var file = await _context.Files.FindAsync(fileId);
+        if (file == null)
+            return BadRequest("Данный файл несуществует");
+
+        var user = await _context.Users.Include(x => x.TrashDir).FirstOrDefaultAsync(x => x.Id == GetIdByJwt());
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        if (rootId != user.RootDirId && rootId != user.TrashDirId)
+            return BadRequest("Вы не можете использовать чужой файл");
+
+        if (file.TrashName == null || file.OldDirId == null)
+            return BadRequest();
+
+        var dirPath = await GetPath(file.DirectoryId, _context);
+        var path = CloudProvider.GetFilePath(dirPath, file.TrashName);
+
+        var returnDirPath = await GetPath(file.OldDirId, _context);
+        var returnPath = CloudProvider.GetFilePath(returnDirPath, file.Name);
+        var name = CloudProvider.ReturnFileFromBin(path, returnPath);
+
+        if (name != null)
+            file.Name = name;
+
+        file.TrashName = null;
+        file.DirectoryId = file.OldDirId ?? 0;
+        file.OldDirId = null;
         await _context.SaveChangesAsync();
 
         return NoContent();

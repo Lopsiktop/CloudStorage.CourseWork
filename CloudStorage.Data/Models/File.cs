@@ -15,6 +15,8 @@ public partial class File
 
     public int? OldDirId { get; set; }
 
+    public string? TrashName { get; set; }
+
     public virtual Directory Directory { get; set; } = null!;
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();

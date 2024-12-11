@@ -238,6 +238,26 @@
                                         </ui:FolderGrid.RowDefinitions>
                                         <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
                                         <TextBlock HorizontalAlignment="Center" Grid.Row="1" TextTrimming="CharacterEllipsis" Text="{Binding DirName}"/>
+                                        <ui:FolderGrid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Click="RefreshFolderClick" CommandParameter="{Binding}">
+                                                    <MenuItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <md:PackIcon Kind="Refresh"/>
+                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Восстановить"/>
+                                                        </StackPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <MenuItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <md:PackIcon Kind="DeleteForever"/>
+                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить навсегда"/>
+                                                        </StackPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </ui:FolderGrid.ContextMenu>
                                     </ui:FolderGrid>
                                 </DataTemplate>
                                 <DataTemplate DataType="{x:Type models:ReturnFileDto}">
@@ -258,6 +278,26 @@
                                         </ui:FileGrid.RowDefinitions>
                                         <Image HorizontalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
                                         <TextBlock Grid.Row="1" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
+                                        <ui:FileGrid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Click="RefreshFileClick" CommandParameter="{Binding}">
+                                                    <MenuItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <md:PackIcon Kind="Refresh"/>
+                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Восстановить"/>
+                                                        </StackPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <MenuItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <md:PackIcon Kind="DeleteForever"/>
+                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить навсегда"/>
+                                                        </StackPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </ui:FileGrid.ContextMenu>
                                     </ui:FileGrid>
                                 </DataTemplate>
                             </ListView.Resources>

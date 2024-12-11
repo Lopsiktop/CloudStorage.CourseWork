@@ -37,10 +37,45 @@ namespace CloudStorage.WebApi.Controllers
 
             var dirPath = await GetPath(dir.Id, _context);
             var path = CloudProvider.GetFolderPath(dirPath);
-            CloudProvider.MoveDirectoryToBin(user.TrashDir!.Name, path);
+            var name = CloudProvider.MoveDirectoryToBin(user.TrashDir!.Name, path);
 
+            dir.TrashName = name;
             dir.OldDirId = dir.ParentId;
             dir.ParentId = user.TrashDirId;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("Refresh/{dirId}")]
+        public async Task<IActionResult> ReturnFromBin(int dirId)
+        {
+            var dir = await _context.Directories.FindAsync(dirId);
+            if (dir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var user = await _context.Users.Include(x => x.TrashDir).FirstOrDefaultAsync(x => x.Id == GetIdByJwt());
+            if (user == null)
+                return BadRequest("Ошибка авторизации");
+
+            var rootId = await GetRootDirId(dirId, _context);
+            if (rootId != user.RootDirId && rootId != user.TrashDirId)
+                return BadRequest("Вы не можете использовать чужую папку");
+
+            var dirPath = await GetPath(dir.Id, _context);
+            dirPath = Path.Combine(dirPath.Remove(dirPath.Length - dir.Name.Length, dir.Name.Length), dir.TrashName);
+            var path = CloudProvider.GetFolderPath(dirPath);
+
+            var returnDirPath = await GetPath(dir.OldDirId, _context);
+            var returnPath = Path.Combine(CloudProvider.GetFolderPath(returnDirPath), dir.Name);
+            var name = CloudProvider.ReturnDirectoryFromBin(path, returnPath);
+
+            if (name != null)
+                dir.Name = name;
+
+            dir.TrashName = null;
+            dir.ParentId = dir.OldDirId ?? 0;
+            dir.OldDirId = null;
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -278,4 +278,34 @@ public static class ApiHelper
         else
             return new Result<bool>(error);
     }
+
+    public static async Task<Result<bool>> RefreshFileFromBin(int fileId)
+    {
+        var response = await _http.PostAsync(_url + "File/Refresh/" + fileId.ToString(), null);
+        if (response.IsSuccessStatusCode)
+        {
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
+
+    public static async Task<Result<bool>> RefreshDirectoryFromBin(int dirId)
+    {
+        var response = await _http.PostAsync(_url + "Directory/Refresh/" + dirId.ToString(), null);
+        if (response.IsSuccessStatusCode)
+        {
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
 }

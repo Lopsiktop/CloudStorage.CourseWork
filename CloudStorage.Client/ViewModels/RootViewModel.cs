@@ -419,4 +419,31 @@ public partial class RootViewModel : ObservableValidator
             await Notify.ShowAsync("Успех", "Папка успешно загружена", NotifyType.Success);
         }
     }
+
+    public async Task RefreshFileFromTrash(ReturnFileDto parameter)
+    {
+        var result = await ApiHelper.RefreshFileFromBin(parameter.Id);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        Files.Remove(parameter);
+        await Notify.ShowAsync("Успех", "Файл успешно восстановлен", NotifyType.Success, 2);
+    }
+
+    internal async Task RefreshFolderFromTrash(ReturnDirDto parameter)
+    {
+        var result = await ApiHelper.RefreshDirectoryFromBin(parameter.DirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        await RefreshStructure();
+        Dirs.Remove(parameter);
+        await Notify.ShowAsync("Успех", "Папка успешно восстановлена", NotifyType.Success, 2);
+    }
 }
