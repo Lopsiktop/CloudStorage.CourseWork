@@ -19,5 +19,7 @@ public partial class Directory
 
     public virtual Directory? Parent { get; set; }
 
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<User> UserRootDirs { get; set; } = new List<User>();
+
+    public virtual ICollection<User> UserTrashDirs { get; set; } = new List<User>();
 }

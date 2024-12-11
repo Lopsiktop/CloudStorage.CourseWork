@@ -24,6 +24,14 @@ public static class CloudProvider
         Directory.CreateDirectory(rootPath);
     }
 
+    public static void CreateTrashDir(string login)
+    {
+        defineFolders();
+
+        var rootPath = Path.Combine(Environment.CurrentDirectory, "Cloud", $"Trash_{login}");
+        Directory.CreateDirectory(rootPath);
+    }
+
     public static bool CreateFolder(string pathn)
     {
         defineFolders();

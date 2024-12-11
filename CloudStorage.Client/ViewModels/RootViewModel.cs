@@ -37,7 +37,9 @@ public partial class RootViewModel : ObservableValidator
     public RootViewModel()
     {
         var node = new ItemNode { Name = "Диск", Type = NodeType.Disk };
+        var trash = new ItemNode { Name = "Корзина", Type = NodeType.Trash };
         Nodes.Add(node);
+        Nodes.Add(trash);
         DirSteps.Clear();
     }
 
@@ -293,6 +295,7 @@ public partial class RootViewModel : ObservableValidator
             Files.Clear();
 
             node.DirId = result.Value.RootDir.DirId;
+            Nodes[1].DirId = result.Value.TrashDir.DirId;
             var root = new ReturnDirDto(node.DirId, node.Name);
             DirSteps.Add(root);
             CurrentDir = root;

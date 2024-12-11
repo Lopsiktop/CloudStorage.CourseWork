@@ -15,8 +15,11 @@ public partial class User
 
     public int RootDirId { get; set; }
 
+    public int? TrashDirId { get; set; }
+
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
 
     public virtual Directory RootDir { get; set; } = null!;
 
+    public virtual Directory? TrashDir { get; set; }
 }

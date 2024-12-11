@@ -64,10 +64,14 @@ public partial class CloudStorageContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasOne(d => d.RootDir).WithMany(p => p.Users)
+            entity.HasOne(d => d.RootDir).WithMany(p => p.UserRootDirs)
                 .HasForeignKey(d => d.RootDirId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Directories");
+
+            entity.HasOne(d => d.TrashDir).WithMany(p => p.UserTrashDirs)
+                .HasForeignKey(d => d.TrashDirId)
+                .HasConstraintName("FK_Users_Directories1");
         });
 
         OnModelCreatingPartial(modelBuilder);

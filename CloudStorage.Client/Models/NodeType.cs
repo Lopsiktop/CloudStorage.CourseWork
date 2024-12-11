@@ -3,5 +3,6 @@
 public enum NodeType
 {
     Disk,
-    Folder
+    Folder,
+    Trash
 }

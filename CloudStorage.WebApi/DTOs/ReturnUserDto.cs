@@ -1,3 +1,3 @@
 ﻿namespace CloudStorage.WebApi.DTOs;
 
-public record ReturnUserDto(int StorageVolume, ReturnRootDirDto RootDir);
+public record ReturnUserDto(int StorageVolume, ReturnRootDirDto RootDir, ReturnDirDto TrashDir);

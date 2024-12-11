@@ -32,6 +32,7 @@ namespace CloudStorage.WebApi.Controllers
             var user = await _context.Users.Include(x => x.RootDir)
                 .ThenInclude(x => x.Files)
                 .Include(x => x.RootDir).ThenInclude(x => x.InverseParent)
+                .Include(x => x.TrashDir)
                 .AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
             return Ok(
@@ -41,7 +42,8 @@ namespace CloudStorage.WebApi.Controllers
                         user.RootDir.Name,
                         user.RootDir.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)), 
                         user.RootDir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name))
-                    )
+                    ),
+                    new ReturnDirDto(user.TrashDir.Id, user.TrashDir.Name)
                 )
             );
         }
@@ -64,9 +66,16 @@ namespace CloudStorage.WebApi.Controllers
                 Name = $"Root_{user.Login}"
             };
 
+            var trash = new Directory
+            {
+                Name = $"Trash_{user.Login}"
+            };
+
             user.RootDir = dir;
+            user.TrashDir = trash;
 
             CloudProvider.CreateUserDir(user.Login);
+            CloudProvider.CreateTrashDir(user.Login);
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();

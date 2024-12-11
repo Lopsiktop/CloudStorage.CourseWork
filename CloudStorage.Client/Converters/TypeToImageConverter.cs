@@ -12,6 +12,8 @@ public class TypeToImageConverter : IValueConverter
         var type = (NodeType)value;
         if (type == NodeType.Disk)
             return new BitmapImage(new Uri("pack://application:,,,/CloudStorage.Client;component/Resources/Images/disk.png"));
+        else if(type == NodeType.Trash)
+            return new BitmapImage(new Uri("pack://application:,,,/CloudStorage.Client;component/Resources/Images/bin.png"));
         else
             return new BitmapImage(new Uri("pack://application:,,,/CloudStorage.Client;component/Resources/Images/folder.png"));
     }
