@@ -15,5 +15,5 @@ public partial class File
 
     public virtual Directory Directory { get; set; } = null!;
 
-    public virtual ICollection<Link> Links { get; set; } = new List<Link>();
+    public virtual ICollection<History> Histories { get; set; } = new List<History>();
 }

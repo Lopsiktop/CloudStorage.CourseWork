@@ -4,8 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # My spec files
-CloudStorage.WebApi/Cloud/
-CloudStorage.WebApi/Zips/
+Cloud/
+Zips/
 
 # User-specific files
 *.rsuser

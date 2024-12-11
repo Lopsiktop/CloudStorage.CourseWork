@@ -35,7 +35,7 @@ namespace CloudStorage.WebApi.Controllers
                 .AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
             return Ok(
-                new ReturnUserDto(user.StorageVolume, 
+                new ReturnUserDto(0, 
                     new ReturnRootDirDto(
                         user.RootDir.Id, 
                         user.RootDir.Name,
@@ -56,7 +56,6 @@ namespace CloudStorage.WebApi.Controllers
             var user = new User
             {
                 Login = model.Login,
-                StorageVolume = 10,
             };
             user.SetPassword(model.Password);
 

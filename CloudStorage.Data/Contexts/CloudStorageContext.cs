@@ -1,4 +1,6 @@
-﻿using CloudStorage.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using CloudStorage.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Directory = CloudStorage.Data.Models.Directory;
 using File = CloudStorage.Data.Models.File;
@@ -20,7 +22,7 @@ public partial class CloudStorageContext : DbContext
 
     public virtual DbSet<File> Files { get; set; }
 
-    public virtual DbSet<Link> Links { get; set; }
+    public virtual DbSet<History> Histories { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -30,8 +32,7 @@ public partial class CloudStorageContext : DbContext
         {
             entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
                 .HasForeignKey(d => d.ParentId)
-                .HasConstraintName("FK_Directories_Directories")
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasConstraintName("FK_Directories_Directories");
         });
 
         modelBuilder.Entity<File>(entity =>
@@ -40,21 +41,25 @@ public partial class CloudStorageContext : DbContext
 
             entity.HasOne(d => d.Directory).WithMany(p => p.Files)
                 .HasForeignKey(d => d.DirectoryId)
-                .HasConstraintName("FK_Files_Directories")
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasConstraintName("FK_Files_Directories");
         });
 
-        modelBuilder.Entity<Link>(entity =>
+        modelBuilder.Entity<History>(entity =>
         {
-            entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
+            entity.ToTable("History");
 
-            entity.HasOne(d => d.Directory).WithMany(p => p.Links)
+            entity.HasOne(d => d.Directory).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.DirectoryId)
-                .HasConstraintName("FK_Links_Directories");
+                .HasConstraintName("FK_History_Directories");
 
-            entity.HasOne(d => d.File).WithMany(p => p.Links)
+            entity.HasOne(d => d.File).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.FileId)
-                .HasConstraintName("FK_Links_Files");
+                .HasConstraintName("FK_History_Files");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Histories)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_History_Users");
         });
 
         modelBuilder.Entity<User>(entity =>
