@@ -1,4 +1,5 @@
 ﻿using CloudStorage.Data.Contexts;
+using CloudStorage.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,5 +34,22 @@ public class BaseApiController : ControllerBase
             return "";
 
         return Path.Combine(await GetPath(dir.ParentId, context), dir.Name);
+    }
+
+    protected async Task AddHistoryAction(User user, ActionType type, CloudStorageContext context, string text, int? dirId = null, int? fileId = null)
+    {
+        if (dirId == null && fileId == null)
+            return;
+        var history = new History()
+        {
+            UserId = user.Id,
+            DirectoryId = dirId,
+            FileId = fileId,
+            ActionType = (int)type,
+            Text = text
+        };
+
+        await context.Histories.AddAsync(history);
+        await context.SaveChangesAsync();
     }
 }
