@@ -9,10 +9,13 @@
         xmlns:viewModels="clr-namespace:CloudStorage.Client.ViewModels"
         d:DataContext="{d:DesignInstance viewModels:HistoryViewModel, IsDesignTimeCreatable=True}"
         Title="История изменений" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid>
-        <DataGrid>
-            
+        <DataGrid ItemsSource="{Binding History}" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Изменение" Binding="{Binding Text}"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding Date}"/>
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </Window>

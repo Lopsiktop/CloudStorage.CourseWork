@@ -308,4 +308,52 @@ public static class ApiHelper
         else
             return new Result<bool>(error);
     }
+
+    public static async Task<Result<List<ReturnHistoryDto>>> GetAllHistory()
+    {
+        var response = await _http.GetAsync(_url + "History/All");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<List<ReturnHistoryDto>>();
+            return new Result<List<ReturnHistoryDto>>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<List<ReturnHistoryDto>>("Ошибка сервера");
+        else
+            return new Result<List<ReturnHistoryDto>>(error);
+    }
+
+    public static async Task<Result<List<ReturnHistoryDto>>> GetFileHistory(int id)
+    {
+        var response = await _http.GetAsync(_url + "History/File/" + id.ToString());
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<List<ReturnHistoryDto>>();
+            return new Result<List<ReturnHistoryDto>>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<List<ReturnHistoryDto>>("Ошибка сервера");
+        else
+            return new Result<List<ReturnHistoryDto>>(error);
+    }
+
+    public static async Task<Result<List<ReturnHistoryDto>>> GetFolderHistory(int id)
+    {
+        var response = await _http.GetAsync(_url + "History/Directory/" + id.ToString());
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<List<ReturnHistoryDto>>();
+            return new Result<List<ReturnHistoryDto>>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<List<ReturnHistoryDto>>("Ошибка сервера");
+        else
+            return new Result<List<ReturnHistoryDto>>(error);
+    }
 }

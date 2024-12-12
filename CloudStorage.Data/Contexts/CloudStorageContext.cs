@@ -56,6 +56,8 @@ public partial class CloudStorageContext : DbContext
         {
             entity.ToTable("History");
 
+            entity.Property(e => e.Date).HasColumnType("datetime");
+
             entity.HasOne(d => d.Directory).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.DirectoryId)
                 .HasConstraintName("FK_History_Directories");

@@ -1,4 +1,5 @@
 ﻿using CloudStorage.Data.Contexts;
+using CloudStorage.Data.Models;
 using CloudStorage.WebApi.DTOs;
 using CloudStorage.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +41,7 @@ public class FileController : BaseApiController
 
         var stream = System.IO.File.OpenRead(filePath);
 
+        await AddHistoryAction(user, ActionType.Downloaded, _context, $"Файл \"{file.Name}\" был скачан", fileId: file.Id);
         return File(stream, "application/octet-stream", file.Name);
     }
 
@@ -72,9 +74,11 @@ public class FileController : BaseApiController
             return BadRequest("Неправильное название файла");
         }
 
+        var oldName = file.Name;
         file.Name = model.Name;
         await _context.SaveChangesAsync();
 
+        await AddHistoryAction(user, ActionType.Renamed, _context, $"Файл \"{oldName}\" был переименован на \"{model.Name}\"", fileId: file.Id);
         return Ok(new ReturnFileDto(file.Id, file.Name, file.Size));
     }
 
@@ -98,6 +102,8 @@ public class FileController : BaseApiController
 
         _context.Files.Remove(file);
         await _context.SaveChangesAsync();
+
+        await AddHistoryAction(user, ActionType.DeletedForever, _context, $"Файл \"{file.Name}\" был удален навсегда", fileId: file.Id);
         return NoContent();
     }
 
@@ -132,6 +138,7 @@ public class FileController : BaseApiController
             await _context.Files.AddAsync(file);
             await _context.SaveChangesAsync();
 
+            await AddHistoryAction(user, ActionType.Added, _context, $"Файл \"{file.Name}\" был загружен на диск", fileId: file.Id);
             return Ok(new ReturnFileDto(file.Id, file.Name, file.Size));
         }
 
@@ -151,6 +158,7 @@ public class FileController : BaseApiController
             return BadRequest("Данная папка не ваша");
 
         var files = dir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size));
+
         return Ok(files);
     }
 
@@ -178,6 +186,7 @@ public class FileController : BaseApiController
         file.DirectoryId = user.TrashDirId ?? 0;
         await _context.SaveChangesAsync();
 
+        await AddHistoryAction(user, ActionType.MovedToTrash, _context, $"Файл \"{file.Name}\" был удален в корзину", fileId: file.Id);
         return NoContent();
     }
 
@@ -228,6 +237,7 @@ public class FileController : BaseApiController
         file.OldDirId = null;
         await _context.SaveChangesAsync();
 
+        await AddHistoryAction(user, ActionType.Restored, _context, $"Файл \"{file.Name}\" был восстановлен из корзины", fileId: file.Id);
         return NoContent();
     }
 }

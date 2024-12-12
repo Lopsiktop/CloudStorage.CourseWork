@@ -40,13 +40,15 @@ public class BaseApiController : ControllerBase
     {
         if (dirId == null && fileId == null)
             return;
+
         var history = new History()
         {
             UserId = user.Id,
             DirectoryId = dirId,
             FileId = fileId,
             ActionType = (int)type,
-            Text = text
+            Text = text,
+            Date = DateTime.Now
         };
 
         await context.Histories.AddAsync(history);

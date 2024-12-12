@@ -17,6 +17,8 @@ public partial class History
 
     public int? DirectoryId { get; set; }
 
+    public DateTime Date { get; set; }
+
     public virtual Directory? Directory { get; set; }
 
     public virtual File? File { get; set; }

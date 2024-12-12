@@ -1,4 +1,5 @@
 ﻿using CloudStorage.Data.Contexts;
+using CloudStorage.Data.Models;
 using CloudStorage.WebApi.DTOs;
 using CloudStorage.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,7 @@ namespace CloudStorage.WebApi.Controllers
             dir.ParentId = user.TrashDirId;
             await _context.SaveChangesAsync();
 
+            await AddHistoryAction(user, ActionType.MovedToTrash, _context, $"Папка \"{dir.Name}\" была удалена в корзину", dirId: dir.Id);
             return NoContent();
         }
 
@@ -92,6 +94,7 @@ namespace CloudStorage.WebApi.Controllers
             dir.OldDirId = null;
             await _context.SaveChangesAsync();
 
+            await AddHistoryAction(user, ActionType.Restored, _context, $"Папка \"{dir.Name}\" была восстановлена из корзины", dirId: dir.Id);
             return NoContent();
         }
 
@@ -116,6 +119,7 @@ namespace CloudStorage.WebApi.Controllers
 
             var stream = System.IO.File.OpenRead(archive);
 
+            await AddHistoryAction(user, ActionType.Downloaded, _context, $"Папка \"{dir.Name}\" была скачана", dirId: dir.Id);
             return File(stream, "application/octet-stream", dir.Name + ".zip");
         }
 
@@ -148,9 +152,11 @@ namespace CloudStorage.WebApi.Controllers
                 return BadRequest("Неправильное название файла");
             }
 
+            var oldDir = dir.Name;
             dir.Name = model.Name;
             await _context.SaveChangesAsync();
 
+            await AddHistoryAction(user, ActionType.Renamed, _context, $"Папка \"{oldDir}\" была переименована на \"{dir.Name}\"", dirId: dir.Id);
             return Ok(new ReturnDirDto(dir.Id, dir.Name));
         }
 
@@ -178,6 +184,7 @@ namespace CloudStorage.WebApi.Controllers
             _context.Directories.Remove(dir);
             await _context.SaveChangesAsync();
 
+            await AddHistoryAction(user, ActionType.DeletedForever, _context, $"Папка \"{dir.Name}\" была удалена навсегда", dirId: dir.Id);
             return NoContent();
         }
 
@@ -240,6 +247,7 @@ namespace CloudStorage.WebApi.Controllers
             if (!created)
                 return BadRequest("Не удалось создать папку");
 
+            await AddHistoryAction(user, ActionType.Created, _context, $"Папка \"{dir.Name}\" была создана", dirId: dir.Id);
             return Ok(new ReturnDirDto(dir.Id, dir.Name));
         }
 
