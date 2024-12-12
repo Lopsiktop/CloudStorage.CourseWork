@@ -88,7 +88,10 @@ public partial class AuthorizeViewModel : ObservableValidator
             return;
         }
 
-        WindowUtils.ShowRootWindow<RootWindow>();
+        if (UserHandler.IsAdmin)
+            WindowUtils.ShowRootWindow<AdminWindow>();
+        else
+            WindowUtils.ShowRootWindow<RootWindow>();
     }
 
     private bool CanLoginMethodExecute() => !GetErrors(nameof(Login)).Any() && !GetErrors(nameof(Password)).Any();

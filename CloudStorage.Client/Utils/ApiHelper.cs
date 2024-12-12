@@ -25,9 +25,10 @@ public static class ApiHelper
         var response = await _http.PostAsJsonAsync(_url + "User/Login", model);
         if (response.IsSuccessStatusCode)
         {
-            var token = await response.Content.ReadAsStringAsync();
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            await SessionHandler.SaveSessionAsync(token);
+            var user = await response.Content.ReadFromJsonAsync<UserDto>();
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
+            UserHandler.IsAdmin = user.IsAdmin;
+            await SessionHandler.SaveSessionAsync(user.Token);
         }
         else
         {
@@ -43,9 +44,10 @@ public static class ApiHelper
         var response = await _http.PostAsJsonAsync(_url + "User/Register", model);
         if (response.IsSuccessStatusCode)
         {
-            var token = await response.Content.ReadAsStringAsync();
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            await SessionHandler.SaveSessionAsync(token);
+            var user = await response.Content.ReadFromJsonAsync<UserDto>();
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
+            UserHandler.IsAdmin = user.IsAdmin;
+            await SessionHandler.SaveSessionAsync(user.Token);
         }
         else
         {

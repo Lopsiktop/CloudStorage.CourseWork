@@ -45,7 +45,13 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(x =>
+{
+    x.AddPolicy("Admin", policy =>
+    {
+        policy.RequireClaim("admin", "1");
+    });
+});
 
 builder.Services.AddDbContext<CloudStorageContext>(x =>
 {

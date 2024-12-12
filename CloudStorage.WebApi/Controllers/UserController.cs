@@ -81,7 +81,7 @@ namespace CloudStorage.WebApi.Controllers
             await _context.SaveChangesAsync();
 
             var token = _jwt.CreateToken(user);
-            return Ok(token);
+            return Ok(new UserDto(token, user.IsAdmin == 1));
         }
 
         [HttpPost("Login")]
@@ -95,7 +95,7 @@ namespace CloudStorage.WebApi.Controllers
                 return BadRequest("Wrong login or password");
 
             var token = _jwt.CreateToken(user);
-            return Ok(token);
+            return Ok(new UserDto(token, user.IsAdmin == 1));
         }
 
         [HttpGet]
