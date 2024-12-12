@@ -148,5 +148,23 @@ namespace CloudStorage.Client.Views
 
             await viewModel.RefreshFolderFromTrash(parameter);
         }
+
+        private async void DeleteForeverFolderClick(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.DeleteDirectory(parameter);
+        }
+
+        private async void DeleteForeverFileClick(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnFileDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.DeleteFile(parameter);
+        }
     }
 }

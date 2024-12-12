@@ -90,11 +90,11 @@ public class FileController : BaseApiController
             return BadRequest("Ошибка авторизации");
 
         var rootId = await GetRootDirId(file.DirectoryId, _context);
-        if(rootId != user.RootDirId)
+        if(rootId != user.RootDirId && rootId != user.TrashDirId)
             return BadRequest("Вы не можете использовать чужой файл");
 
         var path = await GetPath(file.DirectoryId, _context);
-        CloudProvider.DeleteFile(path, file.Name);
+        CloudProvider.DeleteFile(path, file.TrashName);
 
         _context.Files.Remove(file);
         await _context.SaveChangesAsync();

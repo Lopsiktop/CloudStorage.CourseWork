@@ -152,16 +152,17 @@ namespace CloudStorage.WebApi.Controllers
                 return BadRequest("Ошибка авторизации");
 
             var rootId = await GetRootDirId(dirId, _context);
-            if (rootId != user.RootDirId)
+            if (rootId != user.RootDirId && rootId != user.TrashDirId)
                 return BadRequest("Вы не можете использовать чужую папку");
 
             var path = await GetPath(dirId, _context);
+            path = Path.Combine(path.Remove(path.Length - dir.Name.Length, dir.Name.Length), dir.TrashName);
             CloudProvider.DeleteDirectory(path);
+
+            await DeleteChildren(dirId);
 
             _context.Directories.Remove(dir);
             await _context.SaveChangesAsync();
-
-            await DeleteChildren(dirId);
 
             return NoContent();
         }

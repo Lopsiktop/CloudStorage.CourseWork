@@ -248,7 +248,7 @@
                                                         </StackPanel>
                                                     </MenuItem.Header>
                                                 </MenuItem>
-                                                <MenuItem>
+                                                <MenuItem Click="DeleteForeverFolderClick" CommandParameter="{Binding}">
                                                     <MenuItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <md:PackIcon Kind="DeleteForever"/>
@@ -288,7 +288,7 @@
                                                         </StackPanel>
                                                     </MenuItem.Header>
                                                 </MenuItem>
-                                                <MenuItem>
+                                                <MenuItem Click="DeleteForeverFileClick" CommandParameter="{Binding}">
                                                     <MenuItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <md:PackIcon Kind="DeleteForever"/>

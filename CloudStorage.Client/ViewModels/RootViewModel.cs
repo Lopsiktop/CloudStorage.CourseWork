@@ -87,7 +87,7 @@ public partial class RootViewModel : ObservableValidator
 
     public async Task DeleteFile(ReturnFileDto file)
     {
-        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить файл \"{file.Name}\"?", "Удалить", "Нет");
+        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить файл \"{file.Name}\" навсегда?", "Удалить", "Нет");
         if (!confirm)
             return;
 
@@ -99,12 +99,11 @@ public partial class RootViewModel : ObservableValidator
         }
 
         Files.Remove(file);
-        await Notify.ShowAsync("Успех", "Файл успешно удален", NotifyType.Success, 2);
     }
 
     public async Task DeleteDirectory(ReturnDirDto dir)
     {
-        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить папку \"{dir.DirName}\" со всем ее содержимым?", "Удалить", "Нет");
+        var confirm = Confirm.ShowConfimation($"Вы точно хотите удалить папку \"{dir.DirName}\" со всем ее содержимым навсегда?", "Удалить", "Нет");
         if (!confirm)
             return;
 
@@ -116,7 +115,6 @@ public partial class RootViewModel : ObservableValidator
         }
 
         Dirs.Remove(dir);
-        await Notify.ShowAsync("Успех", "Папка успешно удалена", NotifyType.Success, 2);
     }
 
     public async Task RenameDirectory(ReturnDirDto dir)
