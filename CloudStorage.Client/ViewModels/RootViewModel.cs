@@ -1,6 +1,7 @@
 ﻿using CloudStorage.Client.Models;
 using CloudStorage.Client.UI.UIHelpers;
 using CloudStorage.Client.Utils;
+using CloudStorage.Client.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -431,7 +432,7 @@ public partial class RootViewModel : ObservableValidator
         await Notify.ShowAsync("Успех", "Файл успешно восстановлен", NotifyType.Success, 2);
     }
 
-    internal async Task RefreshFolderFromTrash(ReturnDirDto parameter)
+    public async Task RefreshFolderFromTrash(ReturnDirDto parameter)
     {
         var result = await ApiHelper.RefreshDirectoryFromBin(parameter.DirId);
         if (result.IsError)
@@ -443,5 +444,11 @@ public partial class RootViewModel : ObservableValidator
         await RefreshStructure();
         Dirs.Remove(parameter);
         await Notify.ShowAsync("Успех", "Папка успешно восстановлена", NotifyType.Success, 2);
+    }
+
+    [RelayCommand]
+    private void ShowHistory()
+    {
+        WindowUtils.ShowDialogWindow<HistoryWindow>();
     }
 }

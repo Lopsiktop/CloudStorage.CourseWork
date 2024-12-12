@@ -38,6 +38,9 @@
                 <MenuItem Height="30" Header="Аккаунт">
                     <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
                 </MenuItem>
+                <MenuItem Height="30" Header="Действия">
+                    <MenuItem Command="{Binding ShowHistoryCommand}" Height="30" Header="История изменений"/>
+                </MenuItem>
             </Menu>
 
             <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4">
