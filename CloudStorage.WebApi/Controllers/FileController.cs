@@ -204,13 +204,27 @@ public class FileController : BaseApiController
 
         var returnDirPath = await GetPath(file.OldDirId, _context);
         var returnPath = CloudProvider.GetFilePath(returnDirPath, file.Name);
+
+        //if the folder that contained this folder is deleted now, then we should restore this folder to root folder
+        var checkRootId = await GetRootDirId(file.OldDirId, _context);
+        if (checkRootId == user.TrashDirId)
+        {
+            returnDirPath = await GetPath(user.RootDirId, _context);
+            returnPath = CloudProvider.GetFilePath(returnDirPath, file.Name);
+        }
+
         var name = CloudProvider.ReturnFileFromBin(path, returnPath);
 
         if (name != null)
             file.Name = name;
 
         file.TrashName = null;
-        file.DirectoryId = file.OldDirId ?? 0;
+
+        if (checkRootId == user.TrashDirId)
+            file.DirectoryId = user.RootDirId;
+        else
+            file.DirectoryId = file.OldDirId ?? 0;
+
         file.OldDirId = null;
         await _context.SaveChangesAsync();
 

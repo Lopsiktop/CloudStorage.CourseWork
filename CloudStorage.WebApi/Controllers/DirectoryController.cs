@@ -68,13 +68,27 @@ namespace CloudStorage.WebApi.Controllers
 
             var returnDirPath = await GetPath(dir.OldDirId, _context);
             var returnPath = Path.Combine(CloudProvider.GetFolderPath(returnDirPath), dir.Name);
+
+            //if the folder that contained this folder is deleted now, then we should restore this folder to root folder
+            var checkRootId = await GetRootDirId(dir.OldDirId, _context);
+            if(checkRootId == user.TrashDirId)
+            {
+                returnDirPath = await GetPath(user.RootDirId, _context);
+                returnPath = Path.Combine(CloudProvider.GetFolderPath(returnDirPath), dir.Name);
+            }   
+
             var name = CloudProvider.ReturnDirectoryFromBin(path, returnPath);
 
             if (name != null)
                 dir.Name = name;
 
             dir.TrashName = null;
-            dir.ParentId = dir.OldDirId ?? 0;
+
+            if (checkRootId == user.TrashDirId)
+                dir.ParentId = user.RootDirId;
+            else
+                dir.ParentId = dir.OldDirId ?? 0;
+
             dir.OldDirId = null;
             await _context.SaveChangesAsync();
 
