@@ -1,4 +1,5 @@
-﻿using CloudStorage.Client.Models;
+﻿using CloudStorage.Client.Attributes;
+using CloudStorage.Client.Models;
 using CloudStorage.Client.UI.UIHelpers;
 using CloudStorage.Client.Utils;
 using CloudStorage.Client.Views;
@@ -35,6 +36,10 @@ public partial class AuthorizeViewModel : ObservableValidator
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Поле не может быть пустым")]
     [MinLength(4, ErrorMessage = "Поле должно иметь хотя бы 4 символа")]
+    [SpecificSymbols(ErrorMessage = "Пароль должен содержать хотя бы один спец символ")]
+    [UpperSymbol(ErrorMessage = "Пароль должен иметь хотя бы одну заглавную букву")]
+    [LowerSymbol(ErrorMessage = "Пароль должен иметь хотя бы одну строчную букву")]
+    [DigitSymbol(ErrorMessage = "Пароль должен иметь хотя бы одну цифру")]
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RegisterMethodCommand))]
     private string _RegisterPassword;
@@ -42,6 +47,10 @@ public partial class AuthorizeViewModel : ObservableValidator
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Поле не может быть пустым")]
     [MinLength(4, ErrorMessage = "Поле должно иметь хотя бы 4 символа")]
+    [SpecificSymbols(ErrorMessage = "Пароль должен содержать хотя бы один спец символ")]
+    [UpperSymbol(ErrorMessage = "Пароль должен иметь хотя бы одну заглавную букву")]
+    [LowerSymbol(ErrorMessage = "Пароль должен иметь хотя бы одну строчную букву")]
+    [DigitSymbol(ErrorMessage = "Пароль должен иметь хотя бы одну цифру")]
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RegisterMethodCommand))]
     private string _RegisterRetryPassword;
