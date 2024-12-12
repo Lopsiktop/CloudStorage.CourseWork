@@ -449,6 +449,19 @@ public partial class RootViewModel : ObservableValidator
     [RelayCommand]
     private void ShowHistory()
     {
-        WindowUtils.ShowDialogWindow<HistoryWindow>();
+        var viewModel = new HistoryViewModel();
+        WindowUtils.ShowDialogWindow<HistoryWindow>(viewModel, async () => await viewModel.Load());
+    }
+
+    public async Task FolderHistory(ReturnDirDto parameter)
+    {
+        var viewModel = new HistoryViewModel();
+        WindowUtils.ShowDialogWindow<HistoryWindow>(viewModel, async () => await viewModel.Load(dirId: parameter.DirId));
+    }
+
+    public async Task FileHistory(ReturnFileDto parameter)
+    {
+        var viewModel = new HistoryViewModel();
+        WindowUtils.ShowDialogWindow<HistoryWindow>(viewModel, async () => await viewModel.Load(fileId: parameter.Id));
     }
 }

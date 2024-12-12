@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows;
 using System.Windows.Threading;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -36,6 +37,19 @@ public static class WindowUtils
     {
         var window = new T();
         window.Owner = ActiveWindow;
+        window.ShowDialog();
+    }
+
+    public static void ShowDialogWindow<T>(ObservableObject viewModel, Func<Task> Loaded)
+        where T : Window, new()
+    {
+        var window = new T();
+        window.Owner = ActiveWindow;
+        window.DataContext = viewModel;
+        window.Loaded += async (s, e) =>
+        {
+            await Loaded.Invoke();
+        };
         window.ShowDialog();
     }
 

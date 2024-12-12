@@ -9,7 +9,7 @@
         xmlns:viewModels="clr-namespace:CloudStorage.Client.ViewModels"
         d:DataContext="{d:DesignInstance viewModels:HistoryViewModel, IsDesignTimeCreatable=True}"
         Title="История изменений" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <DataGrid ItemsSource="{Binding History}" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
