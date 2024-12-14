@@ -47,4 +47,56 @@ public static class AdminApi
         else
             return new Result<UserDto>(error);
     }
+
+    public static async Task<Result<bool>> Ban(int userId)
+    {
+        var response = await _http.GetAsync(_url + "Admin/User/Ban/" + userId.ToString());
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
+
+    public static async Task<Result<bool>> Unban(int userId)
+    {
+        var response = await _http.GetAsync(_url + "Admin/User/Unban/" + userId.ToString());
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
+
+    public static async Task<Result<bool>> Admin(int userId)
+    {
+        var response = await _http.GetAsync(_url + "Admin/User/Admin/" + userId.ToString());
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
+
+    public static async Task<Result<bool>> Unadmin(int userId)
+    {
+        var response = await _http.GetAsync(_url + "Admin/User/Unadmin/" + userId.ToString());
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
+    }
 }

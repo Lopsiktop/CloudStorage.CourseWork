@@ -36,6 +36,42 @@ public class AdminController : BaseApiController
         return Ok(token);
     }
 
+    [HttpGet("User/Ban/{id}")]
+    public async Task<IActionResult> BanUser(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        user.IsBan = 1;
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpGet("User/Unban/{id}")]
+    public async Task<IActionResult> UnbanUser(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        user.IsBan = 0;
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpGet("User/Admin/{id}")]
+    public async Task<IActionResult> AdminUser(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        user.IsAdmin = 1;
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+    [HttpGet("User/Unadmin/{id}")]
+    public async Task<IActionResult> UnadminUser(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        user.IsAdmin = 0;
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
     [HttpGet]
     public IActionResult Valid() => Ok("Valid Admin");
 }

@@ -50,8 +50,63 @@ public partial class AdminViewModel : ObservableObject
 
         ApiHelper.SetToken(token.Value.Token);
         WindowUtils.ShowDialogWindow<RootWindow>();
+    }
 
-        //todo: цвет кнопки на забанить разбанить
-        //todo: функция бана и разбана
+    [RelayCommand]
+    private async Task BanUnbanUser(AdminUserDto user)
+    {
+        if (user.IsBan)
+        {
+            var result = await AdminApi.Unban(user.Id);
+            if(result.IsError || !result.Value)
+            {
+                await Notify.ShowAsync("Ошибка", "Не удалось разбанить пользователя", NotifyType.Error);
+                return;
+            }
+
+            user.IsBan = false;
+            await Notify.ShowAsync("Успех", "Пользователь успешно разбанен", NotifyType.Success, 2);
+        }
+        else
+        {
+            var result = await AdminApi.Ban(user.Id);
+            if (result.IsError || !result.Value)
+            {
+                await Notify.ShowAsync("Ошибка", "Не удалось забанить пользователя", NotifyType.Error);
+                return;
+            }
+
+            user.IsBan = true;
+            await Notify.ShowAsync("Успех", "Пользователь успешно забанен", NotifyType.Success, 2);
+        }
+    }
+
+    [RelayCommand]
+    private async Task AdminUnadminUser(AdminUserDto user)
+    {
+        if (user.IsAdmin)
+        {
+            var result = await AdminApi.Unadmin(user.Id);
+            if (result.IsError || !result.Value)
+            {
+                await Notify.ShowAsync("Ошибка", "Не удалось забрать админа", NotifyType.Error);
+                return;
+            }
+
+            user.IsAdmin = false;
+            await Notify.ShowAsync("Успех", "Успешно забрали админку", NotifyType.Success, 2);
+        }
+        else
+        {
+            var result = await AdminApi.Admin(user.Id);
+            if (result.IsError || !result.Value)
+            {
+                await Notify.ShowAsync("Ошибка", "Не удалось выдать админку", NotifyType.Error);
+                return;
+            }
+
+            user.IsAdmin = true;
+            await Notify.ShowAsync("Успех", "Админка успешно выдана", NotifyType.Success, 2);
+        }
     }
 }

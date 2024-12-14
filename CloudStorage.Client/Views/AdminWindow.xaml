@@ -16,43 +16,57 @@
     <Window.Resources>
         <conv:ButtonIsBanConverter x:Key="banconv"/>
         <conv:BoolToWordConverter x:Key="wordconv"/>
+        <conv:BoolToColorConverter x:Key="colorconv"/>
+        <conv:AdminWordBoolConverter x:Key="adminconv"/>
     </Window.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0">
-            <MenuItem Height="30" Header="Аккаунт">
-                <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
-            </MenuItem>
-        </Menu>
+            <Grid Grid.Row="0">
+                <Menu>
+                    <MenuItem Height="30" Header="Аккаунт">
+                        <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
+                    </MenuItem>
+                </Menu>
+            </Grid>
 
-        <StackPanel Grid.Row="1">
-            <TextBlock FontSize="20" HorizontalAlignment="Center" Padding="0 20" Text="Список пользователей"/>
-            <DataGrid x:Name="DG" FontSize="17" ItemsSource="{Binding AdminUsers}" AutoGenerateColumns="False" IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="Логин" Binding="{Binding Login}"/>
-                    <DataGridTextColumn Header="Админ" Binding="{Binding IsAdmin, Converter={StaticResource wordconv}}"/>
-                    <DataGridTextColumn Header="Забанен" Binding="{Binding IsBan, Converter={StaticResource wordconv}}"/>
-                    <DataGridTemplateColumn Header="Диск">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding DataContext.OpenDiskCommand, ElementName=DG}" CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="Открыть диск"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Допуск">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="{Binding IsBan, Converter={StaticResource banconv}}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>
+
+            <StackPanel Grid.Row="1">
+                <TextBlock FontSize="20" HorizontalAlignment="Center" Padding="0 20" Text="Список пользователей"/>
+                <DataGrid x:Name="DG" FontSize="17" ItemsSource="{Binding AdminUsers}" AutoGenerateColumns="False" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                        <DataGridTextColumn Header="Логин" Binding="{Binding Login}"/>
+                        <DataGridTextColumn Header="Админ" Binding="{Binding IsAdmin, Converter={StaticResource wordconv}}"/>
+                        <DataGridTextColumn Header="Забанен" Binding="{Binding IsBan, Converter={StaticResource wordconv}}"/>
+                        <DataGridTemplateColumn Header="Диск">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.OpenDiskCommand, ElementName=DG}" CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="Открыть диск"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Допуск">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button BorderThickness="0" Command="{Binding DataContext.BanUnbanUserCommand, ElementName=DG}" Background="{Binding IsBan, Converter={StaticResource colorconv}}" CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="{Binding IsBan, Converter={StaticResource banconv}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Админ">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button BorderThickness="0" Command="{Binding DataContext.AdminUnadminUserCommand, ElementName=DG}" Background="{Binding IsAdmin, Converter={StaticResource colorconv}}" CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="{Binding IsAdmin, Converter={StaticResource adminconv}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
