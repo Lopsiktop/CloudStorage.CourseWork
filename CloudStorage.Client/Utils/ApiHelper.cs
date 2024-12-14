@@ -20,23 +20,31 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    public static async Task<Result<bool>> LoginAsync(LoginModel model)
+    public static async Task<Result<UserDto>> LoginAsync(LoginModel model)
     {
         var response = await _http.PostAsJsonAsync(_url + "User/Login", model);
         if (response.IsSuccessStatusCode)
         {
             var user = await response.Content.ReadFromJsonAsync<UserDto>();
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
             UserHandler.IsAdmin = user.IsAdmin;
-            await SessionHandler.SaveSessionAsync(user.Token);
+
+            if (user.IsAdmin)
+            {
+                AdminApi.SetToken(user.Token);
+            }
+            else
+            {
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", user.Token);
+                await SessionHandler.SaveSessionAsync(user.Token);
+            }
+
+            return new Result<UserDto>(user);
         }
         else
         {
             var error = await response.Content.ReadAsStringAsync();
-            return new Result<bool>("Неверный логин или пароль");
+            return new Result<UserDto>("Неверный логин или пароль");
         }
-
-        return new Result<bool>(response.IsSuccessStatusCode);
     }
 
     public static async Task<Result<bool>> RegisterAsync(LoginModel model)
@@ -357,5 +365,21 @@ public static class ApiHelper
             return new Result<List<ReturnHistoryDto>>("Ошибка сервера");
         else
             return new Result<List<ReturnHistoryDto>>(error);
+    }
+
+    public static async Task<Result<bool>> CheckBan()
+    {
+        var response = await _http.GetAsync(_url + "User/Ban");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<UserDto>();
+            return new Result<bool>(content.IsBan);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<bool>("Ошибка сервера");
+        else
+            return new Result<bool>(error);
     }
 }

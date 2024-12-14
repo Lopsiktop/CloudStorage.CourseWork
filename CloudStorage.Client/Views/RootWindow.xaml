@@ -35,7 +35,7 @@
             </Grid.RowDefinitions>
 
             <Menu Grid.Row="0" Grid.ColumnSpan="2">
-                <MenuItem Height="30" Header="Аккаунт">
+                <MenuItem Visibility="{Binding IsAdmin, Converter={StaticResource descconv}}" Height="30" Header="Аккаунт">
                     <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
                 </MenuItem>
                 <MenuItem Height="30" Header="Действия">

@@ -184,7 +184,7 @@ namespace CloudStorage.WebApi.Controllers
             _context.Directories.Remove(dir);
             await _context.SaveChangesAsync();
 
-            await AddHistoryAction(user, ActionType.DeletedForever, _context, $"Папка \"{dir.Name}\" была удалена навсегда", dirId: dir.Id);
+            await AddHistoryAction(user, ActionType.DeletedForever, _context, $"Папка \"{dir.Name}\" была удалена навсегда");
             return NoContent();
         }
 

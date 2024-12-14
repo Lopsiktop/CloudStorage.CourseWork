@@ -38,9 +38,6 @@ public class BaseApiController : ControllerBase
 
     protected async Task AddHistoryAction(User user, ActionType type, CloudStorageContext context, string text, int? dirId = null, int? fileId = null)
     {
-        if (dirId == null && fileId == null)
-            return;
-
         var history = new History()
         {
             UserId = user.Id,

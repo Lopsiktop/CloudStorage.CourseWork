@@ -13,6 +13,10 @@
         xmlns:viewModels="clr-namespace:CloudStorage.Client.ViewModels"
         d:DataContext="{d:DesignInstance viewModels:AdminViewModel, IsDesignTimeCreatable=True}"
         Title="Панель админа" Height="800" Width="1200" Loaded="Window_Loaded">
+    <Window.Resources>
+        <conv:ButtonIsBanConverter x:Key="banconv"/>
+        <conv:BoolToWordConverter x:Key="wordconv"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,5 +28,31 @@
                 <MenuItem Command="{Binding LogoutCommand}" Height="30" Header="Выйти из аккаунта"/>
             </MenuItem>
         </Menu>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock FontSize="20" HorizontalAlignment="Center" Padding="0 20" Text="Список пользователей"/>
+            <DataGrid x:Name="DG" FontSize="17" ItemsSource="{Binding AdminUsers}" AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Логин" Binding="{Binding Login}"/>
+                    <DataGridTextColumn Header="Админ" Binding="{Binding IsAdmin, Converter={StaticResource wordconv}}"/>
+                    <DataGridTextColumn Header="Забанен" Binding="{Binding IsBan, Converter={StaticResource wordconv}}"/>
+                    <DataGridTemplateColumn Header="Диск">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.OpenDiskCommand, ElementName=DG}" CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="Открыть диск"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Допуск">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button CommandParameter="{Binding}" Style="{StaticResource BaseBtn}" Content="{Binding IsBan, Converter={StaticResource banconv}}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
     </Grid>
 </Window>

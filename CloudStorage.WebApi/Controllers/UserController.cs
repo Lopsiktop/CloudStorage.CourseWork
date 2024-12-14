@@ -58,6 +58,8 @@ namespace CloudStorage.WebApi.Controllers
             var user = new User
             {
                 Login = model.Login,
+                IsBan = 0,
+                IsAdmin = 0
             };
             user.SetPassword(model.Password);
 
@@ -81,7 +83,7 @@ namespace CloudStorage.WebApi.Controllers
             await _context.SaveChangesAsync();
 
             var token = _jwt.CreateToken(user);
-            return Ok(new UserDto(token, user.IsAdmin == 1));
+            return Ok(new UserDto(token, user.IsAdmin == 1, user.IsBan == 1));
         }
 
         [HttpPost("Login")]
@@ -95,7 +97,14 @@ namespace CloudStorage.WebApi.Controllers
                 return BadRequest("Wrong login or password");
 
             var token = _jwt.CreateToken(user);
-            return Ok(new UserDto(token, user.IsAdmin == 1));
+            return Ok(new UserDto(token, user.IsAdmin == 1, user.IsBan == 1));
+        }
+
+        [HttpGet("Ban"), Authorize]
+        public async Task<IActionResult> CheckBan()
+        {
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            return Ok(new UserDto("", user.IsAdmin == 1, user.IsBan == 1));
         }
 
         [HttpGet]

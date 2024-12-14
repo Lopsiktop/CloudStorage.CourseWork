@@ -32,6 +32,9 @@ public partial class RootViewModel : ObservableValidator
     [ObservableProperty]
     private bool _IsDragging;
 
+    [ObservableProperty]
+    private bool _IsAdmin;
+
     public ReturnFileDto OldFile { get; set; }
     public ReturnDirDto OldDir { get; set; }
 
@@ -42,6 +45,7 @@ public partial class RootViewModel : ObservableValidator
         Nodes.Add(node);
         Nodes.Add(trash);
         DirSteps.Clear();
+        IsAdmin = UserHandler.IsAdmin;
     }
 
     private async Task<bool> IsBusy()

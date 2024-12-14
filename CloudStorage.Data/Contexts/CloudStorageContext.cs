@@ -25,7 +25,6 @@ public partial class CloudStorageContext : DbContext
     public virtual DbSet<History> Histories { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Directory>(entity =>
@@ -81,6 +80,7 @@ public partial class CloudStorageContext : DbContext
 
             entity.HasOne(d => d.TrashDir).WithMany(p => p.UserTrashDirs)
                 .HasForeignKey(d => d.TrashDirId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Directories1");
         });
 

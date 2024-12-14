@@ -61,6 +61,11 @@ public partial class AuthorizeViewModel : ObservableValidator
         if (token != null)
         {
             ApiHelper.SetToken(token);
+
+            var ban = await ApiHelper.CheckBan();
+            if (ban.Value)
+                return;
+
             WindowUtils.ShowRootWindow<RootWindow>();
             return;
         }
@@ -82,9 +87,9 @@ public partial class AuthorizeViewModel : ObservableValidator
             return;
         }
 
-        if (!result.Value)
+        if(result.Value.IsBan)
         {
-            await Notify.ShowAsync("Авторизация", "Ошибка сервера, попробуйте чуть позже", NotifyType.Error);
+            await Notify.ShowAsync("Ошибка", "Вы были забанены", NotifyType.Error);
             return;
         }
 

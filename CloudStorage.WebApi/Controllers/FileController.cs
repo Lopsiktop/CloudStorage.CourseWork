@@ -103,7 +103,7 @@ public class FileController : BaseApiController
         _context.Files.Remove(file);
         await _context.SaveChangesAsync();
 
-        await AddHistoryAction(user, ActionType.DeletedForever, _context, $"Файл \"{file.Name}\" был удален навсегда", fileId: file.Id);
+        await AddHistoryAction(user, ActionType.DeletedForever, _context, $"Файл \"{file.Name}\" был удален навсегда");
         return NoContent();
     }
 
@@ -183,7 +183,7 @@ public class FileController : BaseApiController
 
         file.TrashName = name;
         file.OldDirId = file.DirectoryId;
-        file.DirectoryId = user.TrashDirId ?? 0;
+        file.DirectoryId = user.TrashDirId;
         await _context.SaveChangesAsync();
 
         await AddHistoryAction(user, ActionType.MovedToTrash, _context, $"Файл \"{file.Name}\" был удален в корзину", fileId: file.Id);
