@@ -240,4 +240,28 @@ public class FileController : BaseApiController
         await AddHistoryAction(user, ActionType.Restored, _context, $"Файл \"{file.Name}\" был восстановлен из корзины", fileId: file.Id);
         return NoContent();
     }
+
+    [HttpGet("Properties/{fileId}"), Authorize]
+    public async Task<IActionResult> GetProperties(int fileId)
+    {
+        var file = await _context.Files.FirstOrDefaultAsync(x => x.Id == fileId);
+        if (file == null)
+            return BadRequest("Данная папка несуществует");
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        var user = await _context.Users.FindAsync(GetIdByJwt());
+        if (user.RootDirId != rootId && user.TrashDirId != rootId)
+            return BadRequest("Данная папка не ваша");
+
+        var dirPath = await GetPath(file.DirectoryId, _context);
+        var path = CloudProvider.GetFilePath(dirPath, file.Name);
+
+        var creation = System.IO.File.GetCreationTime(path);
+        var modification = System.IO.File.GetLastWriteTime(path);
+
+        var addHistory = await _context.Histories.Where(x => x.FileId == file.Id).OrderByDescending(x => x.Date).FirstOrDefaultAsync();
+        var addedDate = addHistory.Date;
+
+        return Ok(new FileProperties(dirPath, creation, modification, addedDate, file.Size));
+    }
 }

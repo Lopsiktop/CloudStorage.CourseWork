@@ -136,6 +136,15 @@
                                                     </MenuItem.Header>
                                                 </MenuItem>
                                                 <Separator/>
+                                                <MenuItem Click="MenuItem_Click_9" CommandParameter="{Binding}">
+                                                    <MenuItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <md:PackIcon Kind="Menu"/>
+                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
+                                                        </StackPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                                <Separator/>
                                                 <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
                                                     <MenuItem.Header>
                                                         <StackPanel Orientation="Horizontal">
@@ -193,6 +202,15 @@
                                                         <StackPanel Orientation="Horizontal">
                                                             <md:PackIcon Kind="History"/>
                                                             <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
+                                                        </StackPanel>
+                                                    </MenuItem.Header>
+                                                </MenuItem>
+                                                <Separator/>
+                                                <MenuItem Click="MenuItem_Click_8" CommandParameter="{Binding}">
+                                                    <MenuItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <md:PackIcon Kind="Menu"/>
+                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
                                                         </StackPanel>
                                                     </MenuItem.Header>
                                                 </MenuItem>

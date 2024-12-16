@@ -468,4 +468,28 @@ public partial class RootViewModel : ObservableValidator
         var viewModel = new HistoryViewModel();
         WindowUtils.ShowDialogWindow<HistoryWindow>(viewModel, async () => await viewModel.Load(fileId: parameter.Id));
     }
+
+    public async Task FileProperties(ReturnFileDto parameter)
+    {
+        var prop = await ApiHelper.GetFileProperties(parameter.Id);
+        if (prop.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", prop.Error, NotifyType.Error);
+            return;
+        }
+
+        Property.ShowProperty(new PropertyViewModel(prop.Value, parameter.Name));
+    }
+
+    public async Task FolderProperties(ReturnDirDto parameter)
+    {
+        var prop = await ApiHelper.GetFolderProperties(parameter.DirId);
+        if (prop.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", prop.Error, NotifyType.Error);
+            return;
+        }
+
+        Property.ShowProperty(new PropertyViewModel(prop.Value, parameter.DirName));
+    }
 }

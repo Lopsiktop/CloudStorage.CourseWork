@@ -266,5 +266,44 @@ namespace CloudStorage.WebApi.Controllers
             var dirs = dir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name));
             return Ok(dirs);
         }
+
+        [HttpGet("Properties/{dirId}"), Authorize]
+        public async Task<IActionResult> GetProperties(int dirId)
+        {
+            var dir = await _context.Directories.FirstOrDefaultAsync(x => x.Id == dirId);
+            if (dir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var rootId = await GetRootDirId(dir.Id, _context);
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user.RootDirId != rootId && user.TrashDirId != rootId)
+                return BadRequest("Данная папка не ваша");
+
+            var dirPath = await GetPath(dir.Id, _context);
+            var path = CloudProvider.GetFolderPath(dirPath);
+
+            var creation = System.IO.Directory.GetCreationTime(path);
+            var files = await _context.Files.Where(x => x.DirectoryId == dirId).CountAsync();
+            var dirs = await _context.Directories.Where(x => x.ParentId == dirId).CountAsync();
+
+            var size = await GetSize(dirId);
+
+            return Ok(new FolderProperties(dirPath, creation, size, dirs, files));
+        }
+
+        private async Task<decimal> GetSize(int dirId)
+        {
+            decimal size = 0;
+            var dir = await _context.Directories.Include(x => x.FileDirectories).FirstOrDefaultAsync(x => x.Id == dirId);
+
+            foreach (var item in dir.FileDirectories)
+                size += item.Size;
+
+            var child = await _context.Directories.Where(x => x.ParentId == dirId).Select(x => x.Id).ToListAsync();
+            foreach (var item in child)
+                size += await GetSize(item);
+
+            return size;
+        }
     }
 }

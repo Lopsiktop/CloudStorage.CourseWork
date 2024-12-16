@@ -184,5 +184,23 @@ namespace CloudStorage.Client.Views
 
             await viewModel.FileHistory(parameter);
         }
+
+        private async void MenuItem_Click_8(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnFileDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.FileProperties(parameter);
+        }
+
+        private async void MenuItem_Click_9(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.FolderProperties(parameter);
+        }
     }
 }

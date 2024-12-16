@@ -382,4 +382,36 @@ public static class ApiHelper
         else
             return new Result<bool>(error);
     }
+
+    public static async Task<Result<FileProperties>> GetFileProperties(int fileId)
+    {
+        var response = await _http.GetAsync(_url + "File/Properties/" + fileId.ToString());
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<FileProperties>();
+            return new Result<FileProperties>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<FileProperties>("Ошибка сервера");
+        else
+            return new Result<FileProperties>(error);
+    }
+
+    public static async Task<Result<FolderProperties>> GetFolderProperties(int dirId)
+    {
+        var response = await _http.GetAsync(_url + "Directory/Properties/" + dirId.ToString());
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<FolderProperties>();
+            return new Result<FolderProperties>(content);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(error))
+            return new Result<FolderProperties>("Ошибка сервера");
+        else
+            return new Result<FolderProperties>(error);
+    }
 }

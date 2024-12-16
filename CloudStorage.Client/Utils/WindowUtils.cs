@@ -53,6 +53,15 @@ public static class WindowUtils
         window.ShowDialog();
     }
 
+    public static void ShowDialogWindow<T>(ObservableObject viewModel)
+        where T : Window, new()
+    {
+        var window = new T();
+        window.Owner = ActiveWindow;
+        window.DataContext = viewModel;
+        window.ShowDialog();
+    }
+
     public static void ReturnRootWindow()
     {
         ActiveWindow?.Hide();
