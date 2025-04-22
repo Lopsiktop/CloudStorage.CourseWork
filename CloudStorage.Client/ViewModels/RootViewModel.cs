@@ -38,6 +38,32 @@ public partial class RootViewModel : ObservableValidator
     public ReturnFileDto OldFile { get; set; }
     public ReturnDirDto OldDir { get; set; }
 
+    #region Search
+
+    [ObservableProperty]
+    private int _SearchType;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
+    private string _SearchField;
+
+    [RelayCommand(CanExecute = nameof(CanSearchMethodExecute))]
+    private async void Search()
+    {
+        var result = await ApiHelper.Search(_SearchField /* pass dto */);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        //todo: success result
+    }
+
+    private bool CanSearchMethodExecute() => !string.IsNullOrWhiteSpace(_SearchField);
+
+    #endregion
+
     public RootViewModel()
     {
         var node = new ItemNode { Name = "Диск", Type = NodeType.Disk };

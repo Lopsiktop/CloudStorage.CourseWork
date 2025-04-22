@@ -76,285 +76,311 @@
 
             <GridSplitter Grid.Row="2" Width="2"/>
 
-            <TabControl Grid.Row="2" Grid.Column="1">
-                <TabItem Name="DiskTab" IsSelected="True" Visibility="Collapsed">
-                    <Grid Background="White">
-                        <TextBlock Visibility="{Binding IsLoading, Converter={StaticResource boolconv}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Загрузка..."/>
-                        <Border Visibility="{Binding IsDragging, Converter={StaticResource boolconv}}" Margin="10" CornerRadius="20" BorderThickness="2">
-                            <Border.BorderBrush>
-                                <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
-                                    <DrawingBrush.Drawing>
-                                        <DrawingGroup>
-                                            <GeometryDrawing Brush="Black">
-                                                <GeometryDrawing.Geometry>
-                                                    <GeometryGroup>
-                                                        <RectangleGeometry Rect="0,0,50,50" />
-                                                        <RectangleGeometry Rect="50,50,50,50" />
-                                                    </GeometryGroup>
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                        </DrawingGroup>
-                                    </DrawingBrush.Drawing>
-                                </DrawingBrush>
-                            </Border.BorderBrush>
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-                            <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
-                        </Border>
-                        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
-                            <ListView.Resources>
-                                <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
-                                <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
+                <Grid Grid.Row="0" Margin="0 10">
+                    <StackPanel HorizontalAlignment="Center" Margin="20 0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Text="Поиск" Margin="0 0 20 0"/>
+                        <TextBox Text="{Binding SearchField, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="300"
+                                 Padding="10 5" BorderBrush="Gray"/>
+                        <ComboBox SelectedIndex="{Binding SearchType}" BorderBrush="Gray" Padding="10 5" Margin="10 0" Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                            <ComboBoxItem IsSelected="True" Content="По названию"/>
+                            <ComboBoxItem Content="По дате"/>
+                            <ComboBoxItem Content="По размеру"/>
+                        </ComboBox>
+                        <Button Command="{Binding SearchCommand}" Padding="0" BorderThickness="0" Style="{StaticResource MaterialDesignPaperButton}" Width="40">
+                            <Button.Effect>
+                                <DropShadowEffect BlurRadius="0" ShadowDepth="0" Opacity="0" Direction="0" />
+                            </Button.Effect>
+                            <md:PackIcon HorizontalAlignment="Center" VerticalAlignment="Center" Width="25" Height="25" Kind="Search"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+                
+                <TabControl Grid.Row="1">
+                    <TabItem Name="DiskTab" IsSelected="True" Visibility="Collapsed">
+                        <Grid Background="White">
+                            <TextBlock Visibility="{Binding IsLoading, Converter={StaticResource boolconv}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="Загрузка..."/>
+                            <Border Visibility="{Binding IsDragging, Converter={StaticResource boolconv}}" Margin="10" CornerRadius="20" BorderThickness="2">
+                                <Border.BorderBrush>
+                                    <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                                        <DrawingBrush.Drawing>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="Black">
+                                                    <GeometryDrawing.Geometry>
+                                                        <GeometryGroup>
+                                                            <RectangleGeometry Rect="0,0,50,50" />
+                                                            <RectangleGeometry Rect="50,50,50,50" />
+                                                        </GeometryGroup>
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingBrush.Drawing>
+                                    </DrawingBrush>
+                                </Border.BorderBrush>
 
-                                <DataTemplate DataType="{x:Type models:ReturnDirDto}">
-                                    <ui:FolderGrid ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
-                                        <ui:FolderGrid.RowDefinitions>
-                                            <RowDefinition Height="70"/>
-                                            <RowDefinition Height="*"/>
-                                        </ui:FolderGrid.RowDefinitions>
-                                        <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
-                                        <Grid Grid.Row="1" HorizontalAlignment="Center">
-                                            <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
-                                            <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Grid>
-                                        <ui:FolderGrid.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Click="MenuItem_Click_5" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Download"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <Separator/>
-                                                <MenuItem Click="MenuItem_Click_6" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="History"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <Separator/>
-                                                <MenuItem Click="MenuItem_Click_9" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Menu"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <Separator/>
-                                                <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Rename"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <MenuItem Click="MenuItem_Click_1" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Delete"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                            </ContextMenu>
-                                        </ui:FolderGrid.ContextMenu>
-                                    </ui:FolderGrid>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type models:ReturnFileDto}">
-                                    <ui:FileGrid FileModel="{Binding}" Width="90" Height="90">
-                                        <ui:FileGrid.ToolTip>
-                                            <TextBlock>
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} ({1})">
-                                                        <Binding Path="Name"/>
-                                                        <Binding Path="Size" Converter="{StaticResource byteconv}"/>
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </ui:FileGrid.ToolTip>
-                                        <ui:FileGrid.RowDefinitions>
-                                            <RowDefinition Height="65"/>
-                                            <RowDefinition Height="*"/>
-                                        </ui:FileGrid.RowDefinitions>
-                                        <Image HorizontalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
-                                        <Grid Grid.Row="1" HorizontalAlignment="Center">
-                                            <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                            <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Grid>
-                                        <ui:FileGrid.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Click="MenuItem_Click_4" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Download"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <Separator/>
-                                                <MenuItem Click="MenuItem_Click_7" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="History"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <Separator/>
-                                                <MenuItem Click="MenuItem_Click_8" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Menu"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <Separator/>
-                                                <MenuItem Click="MenuItem_Click_2" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Rename"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <MenuItem Click="MenuItem_Click" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Delete"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                            </ContextMenu>
-                                        </ui:FileGrid.ContextMenu>
-                                    </ui:FileGrid>
-                                </DataTemplate>
-                            </ListView.Resources>
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Command="{Binding CreateDirCommand}">
-                                        <MenuItem.Header>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Height="25" Source="/Resources/Images/folder.png"/>
-                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Создать папку"/>
-                                            </StackPanel>
-                                        </MenuItem.Header>
-                                    </MenuItem>
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                            <ListView.ItemsSource>
-                                <CompositeCollection>
-                                    <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
-                                    <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
-                                </CompositeCollection>
-                            </ListView.ItemsSource>
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                        </ListView>
-                    </Grid>
-                </TabItem>
-                <TabItem d:IsSelected="true" Name="BinTab" Visibility="Collapsed">
-                    <Grid Background="White">
-                        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            <ListView.Resources>
-                                <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
-                                <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
+                                <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
+                            </Border>
+                            <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                                <ListView.Resources>
+                                    <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
+                                    <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
 
-                                <DataTemplate DataType="{x:Type models:ReturnDirDto}">
-                                    <ui:FolderGrid ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
-                                        <ui:FolderGrid.RowDefinitions>
-                                            <RowDefinition Height="70"/>
-                                            <RowDefinition Height="*"/>
-                                        </ui:FolderGrid.RowDefinitions>
-                                        <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
-                                        <TextBlock HorizontalAlignment="Center" Grid.Row="1" TextTrimming="CharacterEllipsis" Text="{Binding DirName}"/>
-                                        <ui:FolderGrid.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Click="RefreshFolderClick" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Refresh"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Восстановить"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <MenuItem Click="DeleteForeverFolderClick" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="DeleteForever"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить навсегда"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                            </ContextMenu>
-                                        </ui:FolderGrid.ContextMenu>
-                                    </ui:FolderGrid>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type models:ReturnFileDto}">
-                                    <ui:FileGrid FileModel="{Binding}" Width="90" Height="90">
-                                        <ui:FileGrid.ToolTip>
-                                            <TextBlock>
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} ({1})">
-                                                        <Binding Path="Name"/>
-                                                        <Binding Path="Size" Converter="{StaticResource byteconv}"/>
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </ui:FileGrid.ToolTip>
-                                        <ui:FileGrid.RowDefinitions>
-                                            <RowDefinition Height="65"/>
-                                            <RowDefinition Height="*"/>
-                                        </ui:FileGrid.RowDefinitions>
-                                        <Image HorizontalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
-                                        <TextBlock Grid.Row="1" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
-                                        <ui:FileGrid.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Click="RefreshFileClick" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="Refresh"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Восстановить"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                                <MenuItem Click="DeleteForeverFileClick" CommandParameter="{Binding}">
-                                                    <MenuItem.Header>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <md:PackIcon Kind="DeleteForever"/>
-                                                            <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить навсегда"/>
-                                                        </StackPanel>
-                                                    </MenuItem.Header>
-                                                </MenuItem>
-                                            </ContextMenu>
-                                        </ui:FileGrid.ContextMenu>
-                                    </ui:FileGrid>
-                                </DataTemplate>
-                            </ListView.Resources>
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemsSource>
-                                <CompositeCollection>
-                                    <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
-                                    <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
-                                </CompositeCollection>
-                            </ListView.ItemsSource>
-                        </ListView>
-                    </Grid>
-                </TabItem>
-            </TabControl>
+                                    <DataTemplate DataType="{x:Type models:ReturnDirDto}">
+                                        <ui:FolderGrid ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
+                                            <ui:FolderGrid.RowDefinitions>
+                                                <RowDefinition Height="70"/>
+                                                <RowDefinition Height="*"/>
+                                            </ui:FolderGrid.RowDefinitions>
+                                            <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
+                                            <Grid Grid.Row="1" HorizontalAlignment="Center">
+                                                <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Grid>
+                                            <ui:FolderGrid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="MenuItem_Click_5" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Download"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_6" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="History"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_9" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Menu"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Rename"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="MenuItem_Click_1" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Delete"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ui:FolderGrid.ContextMenu>
+                                        </ui:FolderGrid>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type models:ReturnFileDto}">
+                                        <ui:FileGrid FileModel="{Binding}" Width="90" Height="90">
+                                            <ui:FileGrid.ToolTip>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                                            <Binding Path="Name"/>
+                                                            <Binding Path="Size" Converter="{StaticResource byteconv}"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </ui:FileGrid.ToolTip>
+                                            <ui:FileGrid.RowDefinitions>
+                                                <RowDefinition Height="65"/>
+                                                <RowDefinition Height="*"/>
+                                            </ui:FileGrid.RowDefinitions>
+                                            <Image HorizontalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
+                                            <Grid Grid.Row="1" HorizontalAlignment="Center">
+                                                <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Grid>
+                                            <ui:FileGrid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="MenuItem_Click_4" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Download"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_7" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="History"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_8" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Menu"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_2" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Rename"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="MenuItem_Click" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Delete"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ui:FileGrid.ContextMenu>
+                                        </ui:FileGrid>
+                                    </DataTemplate>
+                                </ListView.Resources>
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding CreateDirCommand}">
+                                            <MenuItem.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Height="25" Source="/Resources/Images/folder.png"/>
+                                                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Создать папку"/>
+                                                </StackPanel>
+                                            </MenuItem.Header>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                                <ListView.ItemsSource>
+                                    <CompositeCollection>
+                                        <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
+                                        <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
+                                    </CompositeCollection>
+                                </ListView.ItemsSource>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                            </ListView>
+                        </Grid>
+                    </TabItem>
+                    <TabItem d:IsSelected="true" Name="BinTab" Visibility="Collapsed">
+                        <Grid Background="White">
+                            <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListView.Resources>
+                                    <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
+                                    <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
+
+                                    <DataTemplate DataType="{x:Type models:ReturnDirDto}">
+                                        <ui:FolderGrid ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Width="90" Height="90">
+                                            <ui:FolderGrid.RowDefinitions>
+                                                <RowDefinition Height="70"/>
+                                                <RowDefinition Height="*"/>
+                                            </ui:FolderGrid.RowDefinitions>
+                                            <Image HorizontalAlignment="Center" Source="/Resources/Images/folder.png"/>
+                                            <TextBlock HorizontalAlignment="Center" Grid.Row="1" TextTrimming="CharacterEllipsis" Text="{Binding DirName}"/>
+                                            <ui:FolderGrid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="RefreshFolderClick" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Refresh"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Восстановить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="DeleteForeverFolderClick" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="DeleteForever"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить навсегда"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ui:FolderGrid.ContextMenu>
+                                        </ui:FolderGrid>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type models:ReturnFileDto}">
+                                        <ui:FileGrid FileModel="{Binding}" Width="90" Height="90">
+                                            <ui:FileGrid.ToolTip>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                                            <Binding Path="Name"/>
+                                                            <Binding Path="Size" Converter="{StaticResource byteconv}"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </ui:FileGrid.ToolTip>
+                                            <ui:FileGrid.RowDefinitions>
+                                                <RowDefinition Height="65"/>
+                                                <RowDefinition Height="*"/>
+                                            </ui:FileGrid.RowDefinitions>
+                                            <Image HorizontalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
+                                            <TextBlock Grid.Row="1" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Name}"/>
+                                            <ui:FileGrid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="RefreshFileClick" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Refresh"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Восстановить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="DeleteForeverFileClick" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="DeleteForever"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить навсегда"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ui:FileGrid.ContextMenu>
+                                        </ui:FileGrid>
+                                    </DataTemplate>
+                                </ListView.Resources>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemsSource>
+                                    <CompositeCollection>
+                                        <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
+                                        <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
+                                    </CompositeCollection>
+                                </ListView.ItemsSource>
+                            </ListView>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
             
         </Grid>
     </Grid>

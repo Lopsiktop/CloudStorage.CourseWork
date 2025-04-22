@@ -20,6 +20,12 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    public static async Task<Result<object>> Search(object model)
+    {
+        //todo: search
+        return new Result<object>("Не удалось выполнить поиск");
+    }
+
     public static async Task<Result<UserDto>> LoginAsync(LoginModel model)
     {
         var response = await _http.PostAsJsonAsync(_url + "User/Login", model);
