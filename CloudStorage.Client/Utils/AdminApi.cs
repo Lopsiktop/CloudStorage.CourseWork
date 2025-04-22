@@ -7,7 +7,7 @@ namespace CloudStorage.Client.Utils;
 
 public static class AdminApi
 {
-    private static string _url = "http://localhost:5044/api/";
+    private static string _url = "http://127.0.0.1:5044/api/";
 
     private static HttpClient _http = new HttpClient();
 
