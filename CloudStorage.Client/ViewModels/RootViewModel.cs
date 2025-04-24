@@ -50,14 +50,21 @@ public partial class RootViewModel : ObservableValidator
     [RelayCommand(CanExecute = nameof(CanSearchMethodExecute))]
     private async void Search()
     {
-        var result = await ApiHelper.Search(_SearchField /* pass dto */);
+        var result = await ApiHelper.Search(_SearchField, _SearchType, _CurrentDir.DirId);
         if (result.IsError)
         {
             await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
             return;
         }
 
-        //todo: success result
+        Dirs.Clear();
+        Files.Clear();
+
+        foreach (var dir in result.Value.Dirs)
+            Dirs.Add(dir);
+
+        foreach (var file in result.Value.Files)
+            Files.Add(file);
     }
 
     private bool CanSearchMethodExecute() => !string.IsNullOrWhiteSpace(_SearchField);
