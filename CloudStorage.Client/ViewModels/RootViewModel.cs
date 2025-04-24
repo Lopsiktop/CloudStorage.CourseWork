@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
 
@@ -40,17 +41,58 @@ public partial class RootViewModel : ObservableValidator
 
     #region Search
 
-    [ObservableProperty]
     private int _SearchType;
+
+    public int SearchType
+    {
+        get => _SearchType;
+        set
+        {
+            SetProperty(ref _SearchType, value);
+
+            if (value == 0)
+            {
+                TextFieldVisibility = Visibility.Visible;
+                DateFieldVisibility = Visibility.Collapsed;
+            }
+            else if (value == 1)
+            {
+                TextFieldVisibility = Visibility.Collapsed;
+                DateFieldVisibility = Visibility.Visible;
+            }
+        }
+    }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
     private string _SearchField;
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
+    private Visibility _TextFieldVisibility = Visibility.Visible;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
+    private Visibility _DateFieldVisibility = Visibility.Collapsed;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
+    private DateTime _DateFrom = DateTime.Now;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
+    private DateTime _DateTo = DateTime.Now;
+
     [RelayCommand(CanExecute = nameof(CanSearchMethodExecute))]
     private async void Search()
     {
-        var result = await ApiHelper.Search(_SearchField, _SearchType, _CurrentDir.DirId);
+        Result<FilterReturnDto> result = new Result<FilterReturnDto>("Не удалось выполнить поиск (code: 50)");
+
+        if (SearchType == 0)
+            result = await ApiHelper.SearchByField(SearchField, CurrentDir.DirId);
+        else if (SearchType == 1)
+            result = await ApiHelper.SearchByDates(DateFrom, DateTo, CurrentDir.DirId);
+        
         if (result.IsError)
         {
             await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
@@ -67,7 +109,16 @@ public partial class RootViewModel : ObservableValidator
             Files.Add(file);
     }
 
-    private bool CanSearchMethodExecute() => !string.IsNullOrWhiteSpace(_SearchField);
+    private bool CanSearchMethodExecute()
+    {
+        if (SearchType == 0 && string.IsNullOrWhiteSpace(_SearchField))
+            return false;
+
+        if (SearchType == 1 && DateFrom > DateTo)
+            return false;
+
+        return true;
+    }
 
     #endregion
 

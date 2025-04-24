@@ -1,5 +1,6 @@
 ﻿using CloudStorage.Data.Contexts;
 using CloudStorage.WebApi.DTOs;
+using CloudStorage.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +21,8 @@ public class FilterController : BaseApiController
         _context = context;
     }
 
-    [HttpGet("Search")]
-    public async Task<IActionResult> Search(string searchField, int searchType, int dirId)
+    [HttpGet("SearchByField")]
+    public async Task<IActionResult> SearchByField(string searchField, int searchType, int dirId)
     {
         if (string.IsNullOrWhiteSpace(searchField))
             return BadRequest("Строка поиска не может быть пустой");
@@ -43,18 +44,72 @@ public class FilterController : BaseApiController
         var dirs = await _GetAllDirs(dir.Id);
         var files = await _GetAllFiles(dirs, dir.Id);
 
-        if (searchType == 0)
-        {
-            var sortedDirs = dirs.Where(x => x.Name.ToLower().Contains(searchField.ToLower()))
+        var sortedDirs = dirs.Where(x => x.Name.ToLower().Contains(searchField.ToLower()))
                 .Select(x => new ReturnDirDto(x.Id, x.Name)).ToList();
 
-            var sortedFiles = files.Where(x => x.Name.ToLower().Contains(searchField.ToLower()))
-                .Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToList();
+        var sortedFiles = files.Where(x => x.Name.ToLower().Contains(searchField.ToLower()))
+            .Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToList();
 
-            return Ok(new FilterReturnDto(sortedFiles, sortedDirs));
+        return Ok(new FilterReturnDto(sortedFiles, sortedDirs));
+    }
+
+    [HttpGet("SearchByDates")]
+    public async Task<IActionResult> SearchByDates(string fromDate, string toDate, int dirId)
+    {
+        if (string.IsNullOrWhiteSpace(fromDate))
+            return BadRequest("Строка даты");
+
+        if (string.IsNullOrWhiteSpace(toDate))
+            return BadRequest("Строка даты");
+
+        var from = DateTime.Parse(fromDate);
+        var to = DateTime.Parse(toDate);
+        to = to.AddHours(23);
+        to = to.AddMinutes(59);
+        to = to.AddSeconds(59);
+
+        var userId = GetIdByJwt();
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var dir = await _context.Directories.FindAsync(dirId);
+        if (dir == null)
+            return BadRequest("Нет такой папки");
+
+        var root = await GetRootDirId(dir.Id, _context);
+        if (root != user.RootDirId)
+            return BadRequest("Недостаточно прав");
+
+        var dirs = await _GetAllDirs(dir.Id);
+        var files = await _GetAllFiles(dirs, dir.Id);
+
+        var sortedDirs = new List<ReturnDirDto>();
+
+        foreach (var item in dirs)
+        {
+            var dirPath = await GetPath(item.Id, _context);
+            var path = CloudProvider.GetFolderPath(dirPath);
+
+            var creation = System.IO.Directory.GetCreationTime(path);
+            if (creation >= from && creation <= to)
+                sortedDirs.Add(new ReturnDirDto(item.Id, item.Name));
         }
 
-        return Ok();
+        var sortedFiles = new List<ReturnFileDto>();
+
+        foreach (var item in files)
+        {
+            var dirPath = await GetPath(item.DirectoryId, _context);
+            var path = CloudProvider.GetFilePath(dirPath, item.Name);
+
+            var creation = System.IO.File.GetCreationTime(path);
+            if (creation >= from && creation <= to)
+                sortedFiles.Add(new ReturnFileDto(item.Id, item.Name, item.Size));
+        }
+
+        return Ok(new FilterReturnDto(sortedFiles, sortedDirs));
     }
 
     private async Task<List<Directory>> _GetAllDirs(int dirId)
@@ -64,7 +119,7 @@ public class FilterController : BaseApiController
         if (dirs.Count == 0)
             return dirs;
 
-        foreach (var dir in dirs)
+        foreach (var dir in dirs.ToList())
         {
             var newDirs = await _GetAllDirs(dir.Id);
             dirs.AddRange(newDirs);

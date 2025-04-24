@@ -20,9 +20,22 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    public static async Task<Result<FilterReturnDto>> Search(string searchField, int searchType, int dirId)
+    public static async Task<Result<FilterReturnDto>> SearchByField(string searchField, int dirId)
     {
-        var response = await _http.GetAsync(_url + $"Filter/Search?searchField={searchField}&searchType={searchType}&dirId={dirId}");
+        var response = await _http.GetAsync(_url + $"Filter/SearchByField?searchField={searchField}&dirId={dirId}");
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<FilterReturnDto>();
+            return new Result<FilterReturnDto>(result);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<FilterReturnDto>($"Не удалось выполнить поиск; ({error})");
+    }
+
+    public static async Task<Result<FilterReturnDto>> SearchByDates(DateTime fromDate, DateTime toDate, int dirId)
+    {
+        var response = await _http.GetAsync(_url + $"Filter/SearchByDates?fromDate={fromDate.ToShortDateString()}&toDate={toDate.ToShortDateString()}&dirId={dirId}");
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadFromJsonAsync<FilterReturnDto>();
