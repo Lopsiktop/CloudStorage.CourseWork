@@ -122,6 +122,44 @@ public partial class RootViewModel : ObservableValidator
 
     #endregion
 
+    #region Sort
+
+    [RelayCommand]
+    private async void Sort(string sortType)
+    {
+        switch (sortType)
+        {
+            case "0":
+                // by name down
+                Dirs = Dirs.OrderBy(x => x.DirName).ToObservableCollection();
+                Files = Files.OrderBy(x => x.Name).ToObservableCollection();
+                break;
+            case "1":
+                // by name up
+                Dirs = Dirs.OrderByDescending(x => x.DirName).ToObservableCollection();
+                Files = Files.OrderByDescending(x => x.Name).ToObservableCollection();
+                break;
+            case "2":
+                // by date down
+                //todo: sort
+                break;
+            case "3":
+                // by date up
+                break;
+            case "4":
+                // by size down
+                break;
+            case "5":
+                // by size up
+                break;
+        }
+
+        OnPropertyChanged(nameof(Dirs));
+        OnPropertyChanged(nameof(Files));
+    }
+
+    #endregion
+
     public RootViewModel()
     {
         var node = new ItemNode { Name = "Диск", Type = NodeType.Disk };
