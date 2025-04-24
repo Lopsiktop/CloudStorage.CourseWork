@@ -20,6 +20,40 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    public static async Task<Result<List<ReturnDirSizeDto>>> SortBySize(int[] dirIds)
+    {
+        var response = await _http.PostAsJsonAsync(_url + $"Filter/SortFolderBySize", new
+        {
+            dirIds
+        });
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<List<ReturnDirSizeDto>>();
+            return new Result<List<ReturnDirSizeDto>>(result);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<List<ReturnDirSizeDto>>($"Не удалось выполнить сортировку; ({error})");
+    }
+
+    public static async Task<Result<FilterReturnDateDto>> SortByDate(int[] dirIds, int[] fileIds)
+    {
+        var response = await _http.PostAsJsonAsync(_url + $"Filter/SortByDate", new
+        {
+            dirIds,
+            fileIds
+        });
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<FilterReturnDateDto>();
+            return new Result<FilterReturnDateDto>(result);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<FilterReturnDateDto>($"Не удалось выполнить сортировку; ({error})");
+    }
     public static async Task<Result<FilterReturnDto>> SearchByField(string searchField, int dirId)
     {
         var response = await _http.GetAsync(_url + $"Filter/SearchByField?searchField={searchField}&dirId={dirId}");

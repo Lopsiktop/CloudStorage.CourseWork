@@ -21,6 +21,81 @@ public class FilterController : BaseApiController
         _context = context;
     }
 
+    private async Task<decimal> GetSize(int dirId)
+    {
+        decimal size = 0;
+        var dir = await _context.Directories.Include(x => x.FileDirectories).FirstOrDefaultAsync(x => x.Id == dirId);
+
+        foreach (var item in dir.FileDirectories)
+            size += item.Size;
+
+        var child = await _context.Directories.Where(x => x.ParentId == dirId).Select(x => x.Id).ToListAsync();
+        foreach (var item in child)
+            size += await GetSize(item);
+
+        return size;
+    }
+
+    [HttpPost("SortFolderBySize")]
+    public async Task<IActionResult> SortFoldersBySize(SizeDto dto)
+    {
+        var userId = GetIdByJwt();
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var dirs = await _context.Directories.Where(x => dto.DirIds.Contains(x.Id)).ToListAsync();
+        var list = new List<ReturnDirSizeDto>();
+
+        foreach (var dir in dirs)
+        {
+            var size = await GetSize(dir.Id);
+            list.Add(new ReturnDirSizeDto(dir.Id, dir.Name, size));
+        }
+
+        return Ok(list.OrderBy(x => x.Size).ToList());
+    }
+
+    [HttpPost("SortByDate")]
+    public async Task<IActionResult> SortByDate(SortDto dto)
+    {
+        var userId = GetIdByJwt();
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var dirs = await _context.Directories.Where(x => dto.DirIds.Contains(x.Id)).ToListAsync();
+        var files = await _context.Files.Where(x => dto.FileIds.Contains(x.Id)).ToListAsync();
+
+        var sortedDirs = new List<ReturnDirDateDto>();
+        var sortedFiles = new List<ReturnFileDateDto>();
+
+        foreach (var item in dirs)
+        {
+            var dirPath = await GetPath(item.Id, _context);
+            var path = CloudProvider.GetFolderPath(dirPath);
+
+            var creation = System.IO.Directory.GetCreationTime(path);
+            sortedDirs.Add(new ReturnDirDateDto(item.Id, item.Name, creation));
+        }
+
+        foreach (var item in files)
+        {
+            var dirPath = await GetPath(item.DirectoryId, _context);
+            var path = CloudProvider.GetFilePath(dirPath, item.Name);
+
+            var creation = System.IO.File.GetCreationTime(path);
+            sortedFiles.Add(new ReturnFileDateDto(item.Id, item.Name, item.Size, creation));
+        }
+
+        return Ok(new FilterReturnDateDto(
+            sortedFiles.OrderBy(x => x.CreationTime).ToList(),
+            sortedDirs.OrderBy(x => x.CreationTime).ToList()
+            ));
+    }
+
     [HttpGet("SearchByField")]
     public async Task<IActionResult> SearchByField(string searchField, int searchType, int dirId)
     {

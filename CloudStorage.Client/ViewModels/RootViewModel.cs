@@ -141,16 +141,58 @@ public partial class RootViewModel : ObservableValidator
                 break;
             case "2":
                 // by date down
-                //todo: sort
+                var result1 = await ApiHelper.SortByDate(Dirs.Select(x => x.DirId).ToArray(),
+                    Files.Select(x => x.Id).ToArray());
+
+                if (result1.IsError)
+                {
+                    await Notify.ShowAsync("Ошибка", result1.Error, NotifyType.Error);
+                    return;
+                }
+
+                Dirs = result1.Value.Dirs.OrderByDescending(x => x.CreationTime).Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
+                Files = result1.Value.Files.OrderByDescending(x => x.CreationTime).Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToObservableCollection();
+
                 break;
             case "3":
                 // by date up
+                var result2 = await ApiHelper.SortByDate(Dirs.Select(x => x.DirId).ToArray(),
+                    Files.Select(x => x.Id).ToArray());
+
+                if (result2.IsError)
+                {
+                    await Notify.ShowAsync("Ошибка", result2.Error, NotifyType.Error);
+                    return;
+                }
+
+                Dirs = result2.Value.Dirs.Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
+                Files = result2.Value.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToObservableCollection();
+
                 break;
             case "4":
                 // by size down
+                var result3 = await ApiHelper.SortBySize(Dirs.Select(x => x.DirId).ToArray());
+                if (result3.IsError)
+                {
+                    await Notify.ShowAsync("Ошибка", result3.Error, NotifyType.Error);
+                    return;
+                }
+
+                Dirs = result3.Value.OrderByDescending(x => x.Size).Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
+                Files = Files.OrderByDescending(x => x.Size).ToObservableCollection();
+
                 break;
             case "5":
                 // by size up
+                var result4 = await ApiHelper.SortBySize(Dirs.Select(x => x.DirId).ToArray());
+                if (result4.IsError)
+                {
+                    await Notify.ShowAsync("Ошибка", result4.Error, NotifyType.Error);
+                    return;
+                }
+
+                Dirs = result4.Value.Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
+                Files = Files.OrderBy(x => x.Size).ToObservableCollection();
                 break;
         }
 
