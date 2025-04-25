@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CloudStorage.Data.Models;
+﻿using CloudStorage.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Directory = CloudStorage.Data.Models.Directory;
 using File = CloudStorage.Data.Models.File;
@@ -24,7 +22,10 @@ public partial class CloudStorageContext : DbContext
 
     public virtual DbSet<History> Histories { get; set; }
 
+    public virtual DbSet<Link> Links { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Directory>(entity =>
@@ -59,16 +60,24 @@ public partial class CloudStorageContext : DbContext
 
             entity.HasOne(d => d.Directory).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.DirectoryId)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_History_Directories");
-
-            entity.HasOne(d => d.File).WithMany(p => p.Histories)
-                .HasForeignKey(d => d.FileId)
-                .HasConstraintName("FK_History_Files");
 
             entity.HasOne(d => d.User).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_History_Users");
+        });
+
+        modelBuilder.Entity<Link>(entity =>
+        {
+            entity.HasOne(d => d.Dir).WithMany(p => p.Links)
+                .HasForeignKey(d => d.DirId)
+                .HasConstraintName("FK_Links_Directories");
+
+            entity.HasOne(d => d.File).WithMany(p => p.Links)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("FK_Links_Files");
         });
 
         modelBuilder.Entity<User>(entity =>

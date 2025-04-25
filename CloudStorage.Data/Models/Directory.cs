@@ -25,6 +25,8 @@ public partial class Directory
 
     public virtual ICollection<Directory> InverseParent { get; set; } = new List<Directory>();
 
+    public virtual ICollection<Link> Links { get; set; } = new List<Link>();
+
     public virtual Directory? OldDir { get; set; }
 
     public virtual Directory? Parent { get; set; }
