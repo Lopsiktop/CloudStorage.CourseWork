@@ -31,6 +31,19 @@ public static class ApiHelper
         return new Result<bool>(error);
     }
 
+    public static async Task<Result<ShareDto>> ShareFolderLink(int dirId) 
+    {
+        var response = await _http.PostAsync(_url + $"Link/CreateFolderLink?dirId={dirId.ToString()}", new StringContent(""));
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            return new Result<ShareDto>(new ShareDto { Url = result });
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<ShareDto>(error);
+    }
+
     public static async Task<Result<ShareDto>> ShareFileLink(int fileId)
     {
         var response = await _http.PostAsync(_url + $"Link/CreateFileLink?fileId={fileId.ToString()}", new StringContent(""));

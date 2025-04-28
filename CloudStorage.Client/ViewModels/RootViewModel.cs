@@ -659,6 +659,14 @@ public partial class RootViewModel : ObservableValidator
 
     public async Task ShareFolder(ReturnDirDto parameter)
     {
+        var result = await ApiHelper.ShareFolderLink(parameter.DirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        Share.ShowUrl(result.Value.Url);
     }
 
     public async Task ShareFile(ReturnFileDto parameter)

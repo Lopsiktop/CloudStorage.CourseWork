@@ -107,7 +107,11 @@ public class LinkController : BaseApiController
 
         var exist = await _context.Links.FirstOrDefaultAsync(x => x.DirId == dirId);
         if (exist != null)
-            return BadRequest("Ссылка на данную папку уже существует!");
+        {
+            var baseUrl2 = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(";").First();
+            var url2 = baseUrl2 + $"/api/Link/Page/{exist.Code}";
+            return Ok(url2);
+        }
 
         var link = new Link
         {
