@@ -26,6 +26,26 @@ public class LinkController : BaseApiController
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
+    [HttpDelete("DeleteLink")]
+    [Authorize]
+    public async Task<IActionResult> DeleteLink(string code)
+    {
+        var userId = GetIdByJwt();
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var exists = await _context.Links.FirstOrDefaultAsync(x => x.Code == code);
+        if (exists == null)
+            return BadRequest("Ссылка не существует!");
+
+        _context.Links.Remove(exists);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpPost("CreateFileLink")]
     [Authorize]
     public async Task<IActionResult> CreateFileLink(int fileId)
@@ -46,7 +66,11 @@ public class LinkController : BaseApiController
 
         var exist = await _context.Links.FirstOrDefaultAsync(x => x.FileId == file.Id);
         if (exist != null)
-            return BadRequest("Ссылка на данный файл уже существует!");
+        {
+            var baseUrl2 = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(";").First();
+            var url2 = baseUrl2 + $"/api/Link/Page/{exist.Code}";
+            return Ok(url2);
+        }
 
         var link = new Link
         {

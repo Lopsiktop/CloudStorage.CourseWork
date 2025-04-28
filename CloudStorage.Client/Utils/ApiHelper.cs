@@ -20,6 +20,30 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    public static async Task<Result<bool>> DeleteLink(string url)
+    {
+        var code = url.Split('/').Last();
+        var response = await _http.DeleteAsync(_url + $"Link/DeleteLink?code={code}");
+        if (response.IsSuccessStatusCode)
+            return new Result<bool>(true);
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<bool>(error);
+    }
+
+    public static async Task<Result<ShareDto>> ShareFileLink(int fileId)
+    {
+        var response = await _http.PostAsync(_url + $"Link/CreateFileLink?fileId={fileId.ToString()}", new StringContent(""));
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            return new Result<ShareDto>(new ShareDto { Url = result });
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<ShareDto>(error);
+    }
+
     public static async Task<Result<List<ReturnDirSizeDto>>> SortBySize(int[] dirIds)
     {
         var response = await _http.PostAsJsonAsync(_url + $"Filter/SortFolderBySize", new

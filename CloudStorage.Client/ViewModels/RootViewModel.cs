@@ -656,4 +656,20 @@ public partial class RootViewModel : ObservableValidator
 
         Property.ShowProperty(new PropertyViewModel(prop.Value, parameter.DirName));
     }
+
+    public async Task ShareFolder(ReturnDirDto parameter)
+    {
+    }
+
+    public async Task ShareFile(ReturnFileDto parameter)
+    {
+        var result = await ApiHelper.ShareFileLink(parameter.Id);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        Share.ShowUrl(result.Value.Url);
+    }
 }

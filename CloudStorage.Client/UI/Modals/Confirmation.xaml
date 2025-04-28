@@ -9,8 +9,8 @@
         Title="Confirmation" Height="200" Width="400" AllowsTransparency="True" Background="Transparent">
     <Border BorderThickness="1" BorderBrush="GreenYellow" Background="White" CornerRadius="10">
         <StackPanel Margin="20 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock TextAlignment="Center" Name="TitleBox" Padding="0 20" TextWrapping="WrapWithOverflow" FontSize="20" Text="Вы уверены что хотите этого? fsafsafasf fsafsaf fasfsa"/>
-            <Grid Margin="0 20 0 0">
+            <TextBlock TextAlignment="Center" Name="TitleBox" Padding="0 20" TextWrapping="Wrap" FontSize="20" Text="Вы уверены что хотите этого? fsafsafasf fsafsaf fasfsa"/>
+            <Grid Margin="0 20">
                 <Button Name="YesBox" Click="Button_Click" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Left" Content="Да"/>
                 <Button Name="NoBox" Click="Button_Click_1" Style="{StaticResource BaseBtn}" HorizontalAlignment="Right" Content="Нет"/>
             </Grid>
