@@ -148,7 +148,241 @@ Padding="10 5" BorderBrush="Gray"/>
 
                                 <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
                             </Border>
-                            <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                            <ListView Visibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                                <ListView.Resources>
+                                    <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
+                                    <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
+
+                                    <DataTemplate DataType="{x:Type models:ReturnDirDto}">
+                                        <ui:FolderGrid Background="Red" ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Height="20">
+                                            <ui:FolderGrid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </ui:FolderGrid.ColumnDefinitions>
+                                            <Image Margin="0 0 10 0" VerticalAlignment="Center" HorizontalAlignment="Left" Source="/Resources/Images/folder.png"/>
+                                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Grid>
+                                            <ui:FolderGrid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="MenuItem_Click_5" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Download"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="MenuItem_Click_11" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="LinkVariant"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Поделиться"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_6" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="History"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_9" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Menu"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Rename"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="MenuItem_Click_1" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Delete"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ui:FolderGrid.ContextMenu>
+                                        </ui:FolderGrid>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type models:ReturnFileDto}">
+                                        <ui:FileGrid FileModel="{Binding}" Height="20">
+                                            <ui:FileGrid.ToolTip>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                                            <Binding Path="Name"/>
+                                                            <Binding Path="Size" Converter="{StaticResource byteconv}"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </ui:FileGrid.ToolTip>
+                                            <ui:FileGrid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </ui:FileGrid.ColumnDefinitions>
+                                            <Image Margin="0 0 10 0" VerticalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
+                                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Grid>
+                                            <ui:FileGrid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="MenuItem_Click_4" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Download"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Скачать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="MenuItem_Click_10" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="LinkVariant"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Поделиться"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_7" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="History"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="История изменений"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_8" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Menu"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Свойства"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_2" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Rename"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переименовать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem Click="MenuItem_Click" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Delete"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Удалить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </ui:FileGrid.ContextMenu>
+                                        </ui:FileGrid>
+                                    </DataTemplate>
+                                </ListView.Resources>
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding CreateDirCommand}">
+                                            <MenuItem.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Height="25" Source="/Resources/Images/folder.png"/>
+                                                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Новая папка"/>
+                                                </StackPanel>
+                                            </MenuItem.Header>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem>
+                                            <MenuItem.Header>
+                                                <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                    <md:PackIcon Kind="Sort"/>
+                                                    <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Сортировка"/>
+                                                </StackPanel>
+                                            </MenuItem.Header>
+
+                                            <MenuItem Command="{Binding SortCommand}" CommandParameter="0">
+                                                <MenuItem.Header>
+                                                    <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                        <md:PackIcon Kind="ArrowDown"/>
+                                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="По названию"/>
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding SortCommand}" CommandParameter="1">
+                                                <MenuItem.Header>
+                                                    <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                        <md:PackIcon Kind="ArrowUp"/>
+                                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="По названию"/>
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding SortCommand}" CommandParameter="2">
+                                                <MenuItem.Header>
+                                                    <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                        <md:PackIcon Kind="ArrowDown"/>
+                                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="По дате создания"/>
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding SortCommand}" CommandParameter="3">
+                                                <MenuItem.Header>
+                                                    <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                        <md:PackIcon Kind="ArrowUp"/>
+                                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="По дате создания"/>
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding SortCommand}" CommandParameter="4">
+                                                <MenuItem.Header>
+                                                    <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                        <md:PackIcon Kind="ArrowDown"/>
+                                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="По размеру"/>
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem Command="{Binding SortCommand}" CommandParameter="5">
+                                                <MenuItem.Header>
+                                                    <StackPanel Margin="5 0 0 0" Orientation="Horizontal">
+                                                        <md:PackIcon Kind="ArrowUp"/>
+                                                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="По размеру"/>
+                                                    </StackPanel>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                                <ListView.ItemsSource>
+                                    <CompositeCollection>
+                                        <CollectionContainer Collection="{Binding Source={StaticResource DirCollection}}"/>
+                                        <CollectionContainer Collection="{Binding Source={StaticResource FileCollection}}"/>
+                                    </CompositeCollection>
+                                </ListView.ItemsSource>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                            </ListView>
+                            <ListView Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
                                 <ListView.Resources>
                                     <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
                                     <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
