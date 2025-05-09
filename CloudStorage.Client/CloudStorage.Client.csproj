@@ -10,11 +10,18 @@
 
   <ItemGroup>
     <None Remove="Resources\Images\bin.png" />
+    <None Remove="Resources\Images\csv-file.png" />
     <None Remove="Resources\Images\disk.png" />
+    <None Remove="Resources\Images\docx-file.png" />
     <None Remove="Resources\Images\folder.png" />
+    <None Remove="Resources\Images\music-notes.png" />
+    <None Remove="Resources\Images\pdf.png" />
     <None Remove="Resources\Images\pictures.png" />
+    <None Remove="Resources\Images\pptx.png" />
     <None Remove="Resources\Images\txt.png" />
     <None Remove="Resources\Images\unknown360.png" />
+    <None Remove="Resources\Images\video-file.png" />
+    <None Remove="Resources\Images\xlsx.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,11 +31,18 @@
 
   <ItemGroup>
     <Resource Include="Resources\Images\bin.png" />
+    <Resource Include="Resources\Images\csv-file.png" />
     <Resource Include="Resources\Images\disk.png" />
+    <Resource Include="Resources\Images\docx-file.png" />
     <Resource Include="Resources\Images\folder.png" />
+    <Resource Include="Resources\Images\music-notes.png" />
+    <Resource Include="Resources\Images\pdf.png" />
     <Resource Include="Resources\Images\pictures.png" />
+    <Resource Include="Resources\Images\pptx.png" />
     <Resource Include="Resources\Images\txt.png" />
     <Resource Include="Resources\Images\unknown360.png" />
+    <Resource Include="Resources\Images\video-file.png" />
+    <Resource Include="Resources\Images\xlsx.png" />
   </ItemGroup>
 
 </Project>

@@ -220,5 +220,17 @@ namespace CloudStorage.Client.Views
 
             await viewModel.ShareFolder(parameter);
         }
+
+        private void MenuItem_Click_12(object sender, RoutedEventArgs e)
+        {
+            ListMode.Visibility = Visibility.Collapsed;
+            FloorMode.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Click_13(object sender, RoutedEventArgs e)
+        {
+            ListMode.Visibility = Visibility.Visible;
+            FloorMode.Visibility = Visibility.Collapsed;
+        }
     }
 }

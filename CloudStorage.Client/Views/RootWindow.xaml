@@ -41,6 +41,12 @@
                 <MenuItem Height="30" Header="Действия">
                     <MenuItem Command="{Binding ShowHistoryCommand}" Height="30" Header="История изменений"/>
                 </MenuItem>
+                <MenuItem Height="30" Header="Вид">
+                    <MenuItem Header="Отображение файлов">
+                        <MenuItem Click="MenuItem_Click_12" Height="30" Header="Плитка"/>
+                        <MenuItem Click="MenuItem_Click_13" Height="30" Header="Список"/>
+                    </MenuItem>
+                </MenuItem>
             </Menu>
 
             <Grid Grid.Row="1" Grid.ColumnSpan="2" Background="#E4E4E4">
@@ -148,13 +154,13 @@ Padding="10 5" BorderBrush="Gray"/>
 
                                 <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
                             </Border>
-                            <ListView Visibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                            <ListView Name="ListMode" Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
                                 <ListView.Resources>
                                     <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
                                     <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
 
                                     <DataTemplate DataType="{x:Type models:ReturnDirDto}">
-                                        <ui:FolderGrid Background="Red" ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Height="20">
+                                        <ui:FolderGrid Width="2000" ToolTip="{Binding DirName}" FolderModel="{Binding}" MouseDown="Grid_MouseDown" Height="30">
                                             <ui:FolderGrid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
@@ -162,7 +168,7 @@ Padding="10 5" BorderBrush="Gray"/>
                                             <Image Margin="0 0 10 0" VerticalAlignment="Center" HorizontalAlignment="Left" Source="/Resources/Images/folder.png"/>
                                             <Grid Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
-                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Left" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding DirName, UpdateSourceTrigger=PropertyChanged}"/>
                                             </Grid>
                                             <ui:FolderGrid.ContextMenu>
                                                 <ContextMenu>
@@ -222,7 +228,7 @@ Padding="10 5" BorderBrush="Gray"/>
                                         </ui:FolderGrid>
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type models:ReturnFileDto}">
-                                        <ui:FileGrid FileModel="{Binding}" Height="20">
+                                        <ui:FileGrid Width="2000" FileModel="{Binding}" Height="30">
                                             <ui:FileGrid.ToolTip>
                                                 <TextBlock>
                                                     <TextBlock.Text>
@@ -240,7 +246,7 @@ Padding="10 5" BorderBrush="Gray"/>
                                             <Image Margin="0 0 10 0" VerticalAlignment="Center" Source="{Binding Name, Converter={StaticResource fileconv}}"/>
                                             <Grid Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Visibility="{Binding IsEditing, Converter={StaticResource descconv}}" TextTrimming="CharacterEllipsis" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <TextBox KeyDown="TextBox_KeyDown" LostFocus="TextBox_LostFocus" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Left" MinWidth="30" Visibility="{Binding IsEditing, Converter={StaticResource boolconv}}" Style="{x:Null}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                                             </Grid>
                                             <ui:FileGrid.ContextMenu>
                                                 <ContextMenu>
@@ -382,7 +388,7 @@ Padding="10 5" BorderBrush="Gray"/>
                                     </ItemsPanelTemplate>
                                 </ListView.ItemsPanel>
                             </ListView>
-                            <ListView Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                            <ListView Name="FloorMode" Visibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
                                 <ListView.Resources>
                                     <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
                                     <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>
