@@ -22,6 +22,7 @@
     <None Remove="Resources\Images\unknown360.png" />
     <None Remove="Resources\Images\video-file.png" />
     <None Remove="Resources\Images\xlsx.png" />
+    <None Remove="Resources\Images\zip-folder.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,7 @@
     <Resource Include="Resources\Images\unknown360.png" />
     <Resource Include="Resources\Images\video-file.png" />
     <Resource Include="Resources\Images\xlsx.png" />
+    <Resource Include="Resources\Images\zip-folder.png" />
   </ItemGroup>
 
 </Project>

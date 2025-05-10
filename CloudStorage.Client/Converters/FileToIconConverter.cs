@@ -35,6 +35,8 @@ public class FileToIconConverter : IValueConverter
             return GetIcon("video-file.png");
         else if (ExtContains(extension, ".mp3;.wav;.flac;.aac;.ogg;.m4a;.wma;.aiff;.dsd;.opus"))
             return GetIcon("music-notes.png");
+        else if (ExtContains(extension, ".zip;.rar;.7z;.tar;.gz;.bz2;.xz;.cab;.iso;.arj;.lzh;.z;.ace;.tar.gz;.tar.bz2"))
+            return GetIcon("zip-folder.png");
         else
             return GetIcon("unknown360.png");
     }
