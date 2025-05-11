@@ -657,6 +657,19 @@ public partial class RootViewModel : ObservableValidator
         Property.ShowProperty(new PropertyViewModel(prop.Value, parameter.DirName));
     }
 
+    public async Task ArchiveFolder(ReturnDirDto parameter)
+    {
+        var result = await ApiHelper.ArchiveFolder(parameter.DirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        await LoadDir(CurrentDir);
+        await Notify.ShowAsync("Успех", "Папка успешно заархивирована", NotifyType.Success);
+    }
+
     public async Task ShareFolder(ReturnDirDto parameter)
     {
         var result = await ApiHelper.ShareFolderLink(parameter.DirId);

@@ -232,5 +232,14 @@ namespace CloudStorage.Client.Views
             ListMode.Visibility = Visibility.Visible;
             FloorMode.Visibility = Visibility.Collapsed;
         }
+
+        private async void MenuItem_Click_14(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnDirDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.ArchiveFolder(parameter);
+        }
     }
 }

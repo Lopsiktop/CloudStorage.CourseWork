@@ -182,12 +182,17 @@ public static class CloudProvider
         return Path.Combine(Environment.CurrentDirectory, "Cloud", dirPath);
     }
 
-    public static string CreateArchive(string folderPath)
+    public static string CreateArchive(string folderPath, string? toPath = null)
     {
         defineFolders();
 
         var folderName = Path.GetFileName(folderPath);
-        var archivePath = Path.Combine(Environment.CurrentDirectory, "Zips", folderName + ".zip");
+        string archivePath = "";
+
+        if (toPath == null)
+            archivePath = Path.Combine(Environment.CurrentDirectory, "Zips", folderName + ".zip");
+        else
+            archivePath = toPath;
 
         if (File.Exists(archivePath))
             File.Delete(archivePath);

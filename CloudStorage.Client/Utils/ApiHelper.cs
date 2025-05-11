@@ -20,6 +20,18 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    public static async Task<Result<bool>> ArchiveFolder(int dirId)
+    {
+        var response = await _http.PostAsync(_url + $"Directory/Archive/{dirId.ToString()}", new StringContent(""));
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<bool>(error);
+    } 
     public static async Task<Result<bool>> DeleteLink(string url)
     {
         var code = url.Split('/').Last();

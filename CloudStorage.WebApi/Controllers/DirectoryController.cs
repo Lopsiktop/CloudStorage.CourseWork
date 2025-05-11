@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Directory = CloudStorage.Data.Models.Directory;
+using File = CloudStorage.Data.Models.File;
 
 namespace CloudStorage.WebApi.Controllers
 {
@@ -225,7 +226,7 @@ namespace CloudStorage.WebApi.Controllers
         public async Task<IActionResult> CreateDir(CreateDirDto model)
         {
             var root = await _context.Directories.FindAsync(model.RootDirId);
-            if(root == null)
+            if (root == null)
                 return BadRequest("Данная папка несуществует");
 
             var rootId = await GetRootDirId(model.RootDirId, _context);
@@ -265,6 +266,43 @@ namespace CloudStorage.WebApi.Controllers
 
             var dirs = dir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name));
             return Ok(dirs);
+        }
+
+        [HttpPost("Archive/{dirId}"), Authorize]
+        public async Task<IActionResult> ArchiveFolder(int dirId)
+        {
+            var dir = await _context.Directories.Include(x => x.Parent).FirstOrDefaultAsync(x => x.Id == dirId);
+            if (dir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var rootId = await GetRootDirId(dir.Id, _context);
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user.RootDirId != rootId && user.TrashDirId != rootId)
+                return BadRequest("Данная папка не ваша");
+
+            if (dir.Parent == null)
+                return BadRequest("Данная операция невозможна");
+
+            var dirPath = await GetPath(dir.Id, _context);
+            var sourcePath = CloudProvider.GetFolderPath(dirPath);
+
+            var archiveName = dir.Name + ".zip";
+            var exists = await _context.Files.FirstOrDefaultAsync(x => x.DirectoryId == dir.ParentId && x.Name == archiveName);
+            if (exists != null)
+                return BadRequest($"Файл с названием \"{archiveName}\" уже существует!");
+
+            //todo: check if file name already exists
+            var destPath = await GetPath(dir.ParentId, _context);
+            var destinationPath = CloudProvider.GetFolderPath(destPath);
+            var archivePath = CloudProvider.GetFilePath(destinationPath, archiveName);
+
+            var readyArchivePath = CloudProvider.CreateArchive(sourcePath, archivePath);
+            
+            var dbFile = new File { Name = archiveName, DirectoryId = (int)dir.ParentId! };
+
+            await _context.Files.AddAsync(dbFile);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpGet("Properties/{dirId}"), Authorize]
