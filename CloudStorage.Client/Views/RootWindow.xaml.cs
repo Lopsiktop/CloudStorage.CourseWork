@@ -241,5 +241,14 @@ namespace CloudStorage.Client.Views
 
             await viewModel.ArchiveFolder(parameter);
         }
+
+        private async void MenuItem_Click_15(object sender, RoutedEventArgs e)
+        {
+            var parameter = ((MenuItem)sender).CommandParameter as ReturnFileDto;
+            if (parameter == null)
+                return;
+
+            await viewModel.UnarchiveFile(parameter);
+        }
     }
 }

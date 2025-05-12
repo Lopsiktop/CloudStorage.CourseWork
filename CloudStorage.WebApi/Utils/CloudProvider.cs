@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Validations;
+﻿using CloudStorage.WebApi.DTOs;
+using Microsoft.OpenApi.Validations;
 using System.IO.Compression;
 
 namespace CloudStorage.WebApi.Utils;
@@ -199,6 +200,51 @@ public static class CloudProvider
 
         ZipFile.CreateFromDirectory(folderPath, archivePath);
         return archivePath;
+    }
+
+    public static string ExtractArchive(string filePath)
+    {
+        defineFolders();
+
+        if (!File.Exists(filePath))
+            throw new Exception();
+
+        var fileName = Path.GetFileName(filePath);
+        var dirName = Path.GetFileNameWithoutExtension(filePath);
+        var rootPath = filePath.Remove(filePath.Length - fileName.Length, fileName.Length);
+        var destPath = Path.Combine(rootPath, dirName);
+
+        ZipFile.ExtractToDirectory(filePath, destPath);
+        return destPath;
+    }
+
+    public static List<ReturnFileDto> GetFiles(string dirPath)
+    {
+        var files = System.IO.Directory.GetFiles(dirPath);
+        var list = new List<ReturnFileDto>();
+
+        foreach (var file in files)
+        {
+            var info = new FileInfo(file);
+
+            list.Add(new ReturnFileDto(0, info.Name, info.Length));
+        }
+
+        return list;
+    }
+
+    public static List<ReturnDirDto> GetFolders(string dirPath)
+    {
+        var dirs = System.IO.Directory.GetDirectories(dirPath);
+        var list = new List<ReturnDirDto>();
+
+        foreach (var dir in dirs)
+        {
+            var name = Path.GetFileName(dir);
+            list.Add(new ReturnDirDto(0, name));
+        }
+
+        return list;
     }
 
     public static string GetFullPathByLogin(string login)

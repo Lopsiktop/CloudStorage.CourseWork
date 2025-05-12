@@ -31,7 +31,21 @@ public static class ApiHelper
 
         var error = await response.Content.ReadAsStringAsync();
         return new Result<bool>(error);
-    } 
+    }
+
+    public static async Task<Result<bool>> UnarchiveFile(int fileId)
+    {
+        var response = await _http.PostAsync(_url + $"Directory/Unarchive/{fileId.ToString()}", new StringContent(""));
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<bool>(error);
+    }
+
     public static async Task<Result<bool>> DeleteLink(string url)
     {
         var code = url.Split('/').Last();

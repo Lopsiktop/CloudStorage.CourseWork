@@ -18,6 +18,7 @@
         <conv:TypeToImageConverter x:Key="typetoimgconv"/>
         <conv:BoolToVisibleConverter x:Key="boolconv"/>
         <conv:BoolToVisibleDescConverter x:Key="descconv"/>
+        <conv:ZipConverter x:Key="zipconv"/>
 
         <conv:FileToIconConverter x:Key="fileconv"/>
         <conv:BytesToStandardConverter x:Key="byteconv"/>
@@ -293,6 +294,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                         </MenuItem.Header>
                                                     </MenuItem>
                                                     <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_15" Visibility="{Binding Name, Converter={StaticResource zipconv}}" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Unarchive"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Разархивировать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
                                                     <MenuItem Click="MenuItem_Click_2" CommandParameter="{Binding}">
                                                         <MenuItem.Header>
                                                             <StackPanel Orientation="Horizontal">
@@ -449,6 +458,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                         </MenuItem.Header>
                                                     </MenuItem>
                                                     <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_14" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Archive"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Архивировать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
                                                     <MenuItem Click="MenuItem_Click_3" CommandParameter="{Binding}">
                                                         <MenuItem.Header>
                                                             <StackPanel Orientation="Horizontal">
@@ -527,6 +544,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                         </MenuItem.Header>
                                                     </MenuItem>
                                                     <Separator/>
+                                                    <MenuItem Click="MenuItem_Click_15" Visibility="{Binding Name, Converter={StaticResource zipconv}}" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="Unarchive"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Разархивировать"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
                                                     <MenuItem Click="MenuItem_Click_2" CommandParameter="{Binding}">
                                                         <MenuItem.Header>
                                                             <StackPanel Orientation="Horizontal">

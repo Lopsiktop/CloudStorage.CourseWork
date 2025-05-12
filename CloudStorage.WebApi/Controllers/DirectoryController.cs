@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 using Directory = CloudStorage.Data.Models.Directory;
 using File = CloudStorage.Data.Models.File;
 
@@ -291,18 +292,93 @@ namespace CloudStorage.WebApi.Controllers
             if (exists != null)
                 return BadRequest($"Файл с названием \"{archiveName}\" уже существует!");
 
-            //todo: check if file name already exists
             var destPath = await GetPath(dir.ParentId, _context);
             var destinationPath = CloudProvider.GetFolderPath(destPath);
             var archivePath = CloudProvider.GetFilePath(destinationPath, archiveName);
 
             var readyArchivePath = CloudProvider.CreateArchive(sourcePath, archivePath);
-            
-            var dbFile = new File { Name = archiveName, DirectoryId = (int)dir.ParentId! };
+
+            var size = new FileInfo(readyArchivePath).Length;
+            var dbFile = new File { Name = archiveName, DirectoryId = (int)dir.ParentId!, Size = size };
 
             await _context.Files.AddAsync(dbFile);
             await _context.SaveChangesAsync();
+
+            await AddHistoryAction(user, ActionType.Archive, _context, $"Архив \"{dbFile.Name}\" был создан", fileId: dbFile.Id);
+
             return Ok();
+        }
+
+        [HttpPost("Unarchive/{fileId}"), Authorize]
+        public async Task<IActionResult> UnarchiveFile(int fileId)
+        {
+            var file = await _context.Files.Include(x => x.Directory).FirstOrDefaultAsync(x => x.Id == fileId);
+            if (file == null)
+                return BadRequest("Данный файл несуществует");
+
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user == null)
+                return BadRequest("Ошибка авторизации");
+
+            var rootId = await GetRootDirId(file.DirectoryId, _context);
+            if (rootId != user.RootDirId && rootId != user.TrashDirId)
+                return BadRequest("Вы не можете использовать чужой файл");
+
+            var dirPath = await GetPath(file.DirectoryId, _context);
+            var filePath = CloudProvider.GetFilePath(dirPath, file.Name);
+
+            var dest = Path.GetFileNameWithoutExtension(filePath);
+            var exists = await _context.Directories.FirstOrDefaultAsync(x => x.Name == dest && x.ParentId == file.DirectoryId);
+            if (exists != null)
+                return BadRequest($"Папка с названием \"{dest}\" уже существует!");
+
+            var destPath = CloudProvider.ExtractArchive(filePath);
+
+            var dir = new Directory { Name = dest, ParentId = file.DirectoryId };
+            
+            await _context.Directories.AddAsync(dir);
+            await _context.SaveChangesAsync();
+
+            await AddHistoryAction(user, ActionType.Unarchive, _context, $"Архив \"{dir.Name}\" был распакован", dirId: dir.Id);
+            await addArchiveContent(dir.Id, destPath, user);
+
+            return Ok();
+        }
+
+        private async Task addArchiveContent(int dirId, string dirPath, User user)
+        {
+            var dir = await _context.Directories.FindAsync(dirId);
+            if (dir == null)
+                return;
+
+            var files = CloudProvider.GetFiles(dirPath);
+            var dirs = CloudProvider.GetFolders(dirPath);
+
+            foreach (var file in files)
+            {
+                var f = new File { Name = file.Name, DirectoryId = dir.Id, Size = file.Size };
+                await _context.Files.AddAsync(f);
+                await _context.SaveChangesAsync();
+                await AddHistoryAction(user, ActionType.Added, _context, $"Файл \"{f.Name}\" был загружен на диск", fileId: f.Id);
+            }
+
+            var dbDirs = new List<Directory>();
+
+            foreach (var d in dirs)
+            {
+                var dbDir = new Directory { Name = d.DirName, ParentId = dir.Id };
+                await _context.Directories.AddAsync(dbDir);
+                dbDirs.Add(dbDir);
+                await _context.SaveChangesAsync();
+                await AddHistoryAction(user, ActionType.Created, _context, $"Папка \"{dbDir.Name}\" была создана", dirId: dbDir.Id);
+            }
+
+            foreach (var d in dbDirs)
+            {
+                var dirP = await GetPath(d.Id, _context);
+                var path = CloudProvider.GetFolderPath(dirP);
+                await addArchiveContent(d.Id, path, user);
+            }
         }
 
         [HttpGet("Properties/{dirId}"), Authorize]

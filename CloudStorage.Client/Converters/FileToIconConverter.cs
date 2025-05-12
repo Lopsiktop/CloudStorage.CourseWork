@@ -7,10 +7,10 @@ namespace CloudStorage.Client.Converters;
 
 public class FileToIconConverter : IValueConverter
 {
-    private BitmapImage GetIcon(string name) => new BitmapImage(new Uri(PathToIcon(name)));
-    private string PathToIcon(string name) => $"pack://application:,,,/CloudStorage.Client;component/Resources/Images/{name}";
+    public static BitmapImage GetIcon(string name) => new BitmapImage(new Uri(PathToIcon(name)));
+    public static string PathToIcon(string name) => $"pack://application:,,,/CloudStorage.Client;component/Resources/Images/{name}";
 
-    public bool ExtContains(string extension, string search) =>
+    public static bool ExtContains(string extension, string search) =>
         search.Split(';').Contains(extension);
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -8,5 +8,7 @@ public enum ActionType
     Renamed = 3,
     Restored = 4,
     Downloaded = 5,
-    Added = 6
+    Added = 6,
+    Archive = 7,
+    Unarchive = 8
 }
