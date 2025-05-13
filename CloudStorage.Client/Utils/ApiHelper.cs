@@ -20,6 +20,18 @@ public static class ApiHelper
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
+    public static async Task<Result<bool>> MoveFile(int fileId, int dirId)
+    {
+        //todo: work with API
+        return new Result<bool>(true);
+    }
+
+    public static async Task<Result<bool>> MoveDir(int fromDirId, int toDirId)
+    {
+        //todo: work with API
+        return new Result<bool>(true);
+    }
+
     public static async Task<Result<bool>> ArchiveFolder(int dirId)
     {
         var response = await _http.PostAsync(_url + $"Directory/Archive/{dirId.ToString()}", new StringContent(""));

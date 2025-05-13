@@ -189,6 +189,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                             </StackPanel>
                                                         </MenuItem.Header>
                                                     </MenuItem>
+                                                    <MenuItem MouseEnter="MoveEnter" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="MoveToInbox"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переместить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
                                                     <Separator/>
                                                     <MenuItem Click="MenuItem_Click_6" CommandParameter="{Binding}">
                                                         <MenuItem.Header>
@@ -272,6 +280,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <md:PackIcon Kind="LinkVariant"/>
                                                                 <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Поделиться"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem MouseEnter="MoveEnter" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="MoveToInbox"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переместить"/>
                                                             </StackPanel>
                                                         </MenuItem.Header>
                                                     </MenuItem>
@@ -439,6 +455,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                             </StackPanel>
                                                         </MenuItem.Header>
                                                     </MenuItem>
+                                                    <MenuItem MouseEnter="MoveEnter" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="MoveToInbox"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переместить"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
                                                     <Separator/>
                                                     <MenuItem Click="MenuItem_Click_6" CommandParameter="{Binding}">
                                                         <MenuItem.Header>
@@ -522,6 +546,14 @@ Padding="10 5" BorderBrush="Gray"/>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <md:PackIcon Kind="LinkVariant"/>
                                                                 <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Поделиться"/>
+                                                            </StackPanel>
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                    <MenuItem MouseEnter="MoveEnter" CommandParameter="{Binding}">
+                                                        <MenuItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <md:PackIcon Kind="MoveToInbox"/>
+                                                                <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="Переместить"/>
                                                             </StackPanel>
                                                         </MenuItem.Header>
                                                     </MenuItem>

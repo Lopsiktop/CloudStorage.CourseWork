@@ -6,9 +6,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Reflection.Metadata;
 using System.Windows;
-using System.Windows.Controls;
-using System.Xml.Linq;
 
 namespace CloudStorage.Client.ViewModels;
 
@@ -705,5 +704,31 @@ public partial class RootViewModel : ObservableValidator
         }
 
         Share.ShowUrl(result.Value.Url);
+    }
+
+    public async Task MoveFile(int fileId, int toDirId)
+    {
+        var result = await ApiHelper.MoveFile(fileId, toDirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        await LoadDir(CurrentDir);
+        await Notify.ShowAsync("Успех", "Файл успешно перемещен", NotifyType.Success);
+    }
+
+    public async Task MoveDir(int fromDirId, int toDirId)
+    {
+        var result = await ApiHelper.MoveDir(fromDirId, toDirId);
+        if (result.IsError)
+        {
+            await Notify.ShowAsync("Ошибка", result.Error, NotifyType.Error);
+            return;
+        }
+
+        await LoadDir(CurrentDir);
+        await Notify.ShowAsync("Успех", "Папка успешно перемещена", NotifyType.Success);
     }
 }

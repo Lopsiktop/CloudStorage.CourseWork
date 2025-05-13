@@ -1,7 +1,10 @@
 ﻿using CloudStorage.Client.Models;
 using CloudStorage.Client.UI;
+using CloudStorage.Client.UI.UIHelpers;
 using CloudStorage.Client.ViewModels;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +20,7 @@ namespace CloudStorage.Client.Views
             viewModel = new RootViewModel();
             DataContext = viewModel;
         }
+
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await viewModel.Loaded();
@@ -249,6 +253,77 @@ namespace CloudStorage.Client.Views
                 return;
 
             await viewModel.UnarchiveFile(parameter);
+        }
+
+        private void MoveEnter(object sender, MouseEventArgs e)
+        {
+            var menuItem = (MenuItem)sender;
+            var nodes = viewModel.Nodes.First().Nodes; //First().Nodes returns currentDir's folders
+
+            GetNodes(menuItem, nodes);
+        }
+
+        private void GetNodes(MenuItem menuItem, ObservableCollection<ItemNode> nodes)
+        {
+            bool all = true;
+            foreach (MenuItem item in menuItem.Items)
+            {
+                var node = item.CommandParameter as ItemNode;
+                var res = nodes.Any(x => x.Name == node.Name);
+                if (!res)
+                {
+                    all = false;
+                    break;
+                }
+            }
+
+            if (menuItem.Items.Count != nodes.Count)
+                all = false;
+
+            if (all)
+                return;
+
+            menuItem.Items.Clear();
+
+            foreach (var node in nodes)
+            {
+                var item = new MenuItem();
+                item.Header = node.Name.ToString();
+                item.CommandParameter = node;
+                item.PreviewMouseLeftButtonDown += MoveDown;
+                menuItem.Items.Add(item);
+
+                GetNodes(item, node.Nodes);
+            }
+        }
+
+        private async void MoveDown(object sender, MouseButtonEventArgs e)
+        {
+            var item = (MenuItem)sender;
+            var node = item.CommandParameter as ItemNode;
+
+            var parameter = GetParameter(item);
+            if (parameter == null)
+                return;
+
+            if (parameter is ReturnDirDto dir)
+                await viewModel.MoveDir(dir.DirId, node.DirId);
+            else if (parameter is ReturnFileDto file)
+                await viewModel.MoveFile(file.Id, node.DirId);
+        }
+
+        private object GetParameter(MenuItem item)
+        {
+            if (item == null)
+                return null;
+
+            if (item.CommandParameter is ReturnFileDto dto)
+                return dto;
+
+            if (item.CommandParameter is ReturnDirDto dir)
+                return dir;
+
+            return GetParameter(item.Parent as MenuItem);
         }
     }
 }
