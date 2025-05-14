@@ -19,4 +19,8 @@
     <ProjectReference Include="..\CloudStorage.Data\CloudStorage.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Cloud\" />
+  </ItemGroup>
+
 </Project>
