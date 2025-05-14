@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml.Linq;
+using static MaterialDesignThemes.Wpf.Theme.ToolBar;
 
 namespace CloudStorage.Client.Views
 {
@@ -269,6 +271,9 @@ namespace CloudStorage.Client.Views
             foreach (MenuItem item in menuItem.Items)
             {
                 var node = item.CommandParameter as ItemNode;
+                if (node.Type != NodeType.Folder)
+                    continue;
+
                 var res = nodes.Any(x => x.Name == node.Name);
                 if (!res)
                 {
@@ -277,7 +282,12 @@ namespace CloudStorage.Client.Views
                 }
             }
 
-            if (menuItem.Items.Count != nodes.Count)
+            var count = 0;
+            foreach (var item in menuItem.Items)
+                if ((item as MenuItem)!.Header.ToString() != "(эту папку)")
+                    count++;
+
+            if (count != nodes.Count)
                 all = false;
 
             if (all)
@@ -294,6 +304,23 @@ namespace CloudStorage.Client.Views
                 menuItem.Items.Add(item);
 
                 GetNodes(item, node.Nodes);
+
+                if (item.Items.Count > 0)
+                    item.PreviewMouseLeftButtonDown -= MoveDown;
+            }
+
+            if (nodes.Count != 0)
+            {
+                var item = new MenuItem();
+                item.Header = "(эту папку)";
+
+                if ((menuItem.CommandParameter is ReturnFileDto) || (menuItem.CommandParameter is ReturnDirDto))
+                    item.CommandParameter = viewModel.Nodes.First();
+                else
+                    item.CommandParameter = menuItem.CommandParameter;
+
+                item.PreviewMouseLeftButtonDown += MoveDown;
+                menuItem.Items.Add(item);
             }
         }
 

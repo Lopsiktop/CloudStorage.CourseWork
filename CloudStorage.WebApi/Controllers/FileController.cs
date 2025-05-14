@@ -264,4 +264,46 @@ public class FileController : BaseApiController
 
         return Ok(new FileProperties(dirPath, creation, modification, addedDate, file.Size));
     }
+
+    [HttpPost("MoveFile"), Authorize]
+    public async Task<IActionResult> MoveFile(int fileId, int dirId)
+    {
+        var file = await _context.Files.FindAsync(fileId);
+        if (file == null)
+            return BadRequest("Данный файл несуществует");
+
+        var user = await _context.Users.Include(x => x.TrashDir).FirstOrDefaultAsync(x => x.Id == GetIdByJwt());
+        if (user == null)
+            return BadRequest("Ошибка авторизации");
+
+        var rootId = await GetRootDirId(file.DirectoryId, _context);
+        if (rootId != user.RootDirId && rootId != user.TrashDirId)
+            return BadRequest("Вы не можете использовать чужой файл");
+
+        var dir = await _context.Directories.FindAsync(dirId);
+        if (dir == null)
+            return BadRequest("Данная папка не существует");
+
+        var rootDirId = await GetRootDirId(dir.Id, _context);
+        if (rootDirId != user.RootDirId && rootDirId != user.TrashDirId)
+            return BadRequest("Вы не можете использовать чужую директорию");
+
+        //
+
+        if (file.DirectoryId == dir.Id)
+            return BadRequest("Вы не можете переместить файл в ту же папку");
+
+        var getPath = await GetPath(file.DirectoryId, _context);
+        var sourcePath = CloudProvider.GetFilePath(getPath, file.Name);
+
+        var getPath2 = await GetPath(dir.Id, _context);
+        var destPath = CloudProvider.GetFilePath(getPath2, file.Name);
+
+        System.IO.File.Move(sourcePath, destPath);
+
+        file.DirectoryId = dir.Id;
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
 }
