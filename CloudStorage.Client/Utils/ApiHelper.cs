@@ -22,11 +22,6 @@ public static class ApiHelper
 
     public static async Task<Result<bool>> MoveFile(int fileId, int dirId)
     {
-        // добавить нод для КОРНЕВОЙ ПАПКИ ДИСКА
-
-        // todo: work with API
-        // check if folder is the same, return error (API)
-        // помимо изменения ИД папки в базе, надо еще переместить файлы физически
         var response = await _http.PostAsync(_url + $"File/MoveFile?fileId={fileId}&dirId={dirId}", new StringContent(""));
         if (response.IsSuccessStatusCode)
         {
@@ -40,11 +35,15 @@ public static class ApiHelper
 
     public static async Task<Result<bool>> MoveDir(int fromDirId, int toDirId)
     {
-        // todo: work with API
-        // check if we trying move parent folder to his child, return error (API)
-        // то есть нельзя переместить папку в дочернюю папку
-        // помимо изменения ИД папки в базе, надо еще переместить файлы физически
-        return new Result<bool>(true);
+        var response = await _http.PostAsync(_url + $"Directory/MoveDir?fromDirId={fromDirId}&toDirId={toDirId}", new StringContent(""));
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            return new Result<bool>(true);
+        }
+
+        var error = await response.Content.ReadAsStringAsync();
+        return new Result<bool>(error);
     }
 
     public static async Task<Result<bool>> ArchiveFolder(int dirId)

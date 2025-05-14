@@ -257,8 +257,10 @@ namespace CloudStorage.Client.Views
             await viewModel.UnarchiveFile(parameter);
         }
 
-        private void MoveEnter(object sender, MouseEventArgs e)
+        private async void MoveEnter(object sender, MouseEventArgs e)
         {
+            await viewModel.RefreshStructure();
+
             var menuItem = (MenuItem)sender;
             var nodes = viewModel.Nodes.First().Nodes; //First().Nodes returns currentDir's folders
 

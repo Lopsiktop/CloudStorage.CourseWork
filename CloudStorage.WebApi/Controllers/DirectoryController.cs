@@ -125,6 +125,51 @@ namespace CloudStorage.WebApi.Controllers
             return File(stream, "application/octet-stream", dir.Name + ".zip");
         }
 
+        [HttpPost("MoveDir"), Authorize]
+        public async Task<IActionResult> MoveDir(int fromDirId, int toDirId)
+        {
+            var dir = await _context.Directories.FindAsync(fromDirId);
+            if (dir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var user = await _context.Users.FindAsync(GetIdByJwt());
+            if (user == null)
+                return BadRequest("Ошибка авторизации");
+
+            var rootId = await GetRootDirId(dir.Id, _context);
+            if (rootId != user.RootDirId && rootId != user.TrashDirId)
+                return BadRequest("Вы не можете использовать чужую папку");
+
+            var toDir = await _context.Directories.FindAsync(toDirId);
+            if (toDir == null)
+                return BadRequest("Данная папка несуществует");
+
+            var rootId2 = await GetRootDirId(toDir.Id, _context);
+            if (rootId2 != user.RootDirId && rootId2 != user.TrashDirId)
+                return BadRequest("Вы не можете использовать чужую папку");
+
+            //
+
+            if (dir.ParentId == toDirId)
+                return BadRequest("Вы не можете переместить директорию в ту же папку");
+
+            var destPath = await GetPath(toDir.Id, _context);
+            if (destPath.Contains(dir.Name))
+                return BadRequest("Невозможно переместить папку в дочернюю директорию");
+
+            var dirPath = await GetPath(dir.Id, _context);
+            var sourcePath = CloudProvider.GetFolderPath(dirPath);
+
+            var destination = Path.Combine(CloudProvider.GetFolderPath(destPath), dir.Name);
+
+            System.IO.Directory.Move(sourcePath, destination);
+
+            dir.ParentId = toDir.Id;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpPost("Rename"), Authorize]
         public async Task<IActionResult> RenameDirectory(RenameDirectoryDto model)
         {
