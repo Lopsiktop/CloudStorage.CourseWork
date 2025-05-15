@@ -1,4 +1,6 @@
-﻿using CloudStorage.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using CloudStorage.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Directory = CloudStorage.Data.Models.Directory;
 using File = CloudStorage.Data.Models.File;
@@ -30,6 +32,8 @@ public partial class CloudStorageContext : DbContext
     {
         modelBuilder.Entity<Directory>(entity =>
         {
+            entity.Property(e => e.CreationTime).HasColumnType("datetime");
+
             entity.HasOne(d => d.OldDir).WithMany(p => p.InverseOldDir)
                 .HasForeignKey(d => d.OldDirId)
                 .HasConstraintName("FK_Directories_Directories1");
@@ -41,6 +45,7 @@ public partial class CloudStorageContext : DbContext
 
         modelBuilder.Entity<File>(entity =>
         {
+            entity.Property(e => e.CreationTime).HasColumnType("datetime");
             entity.Property(e => e.Size).HasColumnType("decimal(18, 6)");
 
             entity.HasOne(d => d.Directory).WithMany(p => p.FileDirectories)

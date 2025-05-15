@@ -441,7 +441,7 @@ namespace CloudStorage.WebApi.Controllers
             var dirPath = await GetPath(dir.Id, _context);
             var path = CloudProvider.GetFolderPath(dirPath);
 
-            var creation = System.IO.Directory.GetCreationTime(path);
+            var creation = dir.CreationTime ?? DateTime.MinValue;
             var files = await _context.Files.Where(x => x.DirectoryId == dirId).CountAsync();
             var dirs = await _context.Directories.Where(x => x.ParentId == dirId).CountAsync();
 

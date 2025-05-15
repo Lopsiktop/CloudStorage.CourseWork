@@ -74,19 +74,13 @@ public class FilterController : BaseApiController
 
         foreach (var item in dirs)
         {
-            var dirPath = await GetPath(item.Id, _context);
-            var path = CloudProvider.GetFolderPath(dirPath);
-
-            var creation = System.IO.Directory.GetCreationTime(path);
+            var creation = item.CreationTime ?? DateTime.MinValue;
             sortedDirs.Add(new ReturnDirDateDto(item.Id, item.Name, creation));
         }
 
         foreach (var item in files)
         {
-            var dirPath = await GetPath(item.DirectoryId, _context);
-            var path = CloudProvider.GetFilePath(dirPath, item.Name);
-
-            var creation = System.IO.File.GetCreationTime(path);
+            var creation = item.CreationTime ?? DateTime.MinValue;
             sortedFiles.Add(new ReturnFileDateDto(item.Id, item.Name, item.Size, creation));
         }
 
@@ -164,10 +158,7 @@ public class FilterController : BaseApiController
 
         foreach (var item in dirs)
         {
-            var dirPath = await GetPath(item.Id, _context);
-            var path = CloudProvider.GetFolderPath(dirPath);
-
-            var creation = System.IO.Directory.GetCreationTime(path);
+            var creation = item.CreationTime ?? DateTime.MinValue;
             if (creation >= from && creation <= to)
                 sortedDirs.Add(new ReturnDirDto(item.Id, item.Name));
         }
@@ -176,10 +167,7 @@ public class FilterController : BaseApiController
 
         foreach (var item in files)
         {
-            var dirPath = await GetPath(item.DirectoryId, _context);
-            var path = CloudProvider.GetFilePath(dirPath, item.Name);
-
-            var creation = System.IO.File.GetCreationTime(path);
+            var creation = item.CreationTime ?? DateTime.MinValue;
             if (creation >= from && creation <= to)
                 sortedFiles.Add(new ReturnFileDto(item.Id, item.Name, item.Size));
         }

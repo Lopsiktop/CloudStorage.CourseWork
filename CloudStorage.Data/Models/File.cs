@@ -17,9 +17,16 @@ public partial class File
 
     public string? TrashName { get; set; }
 
+    public DateTime? CreationTime { get; set; }
+
     public virtual Directory Directory { get; set; } = null!;
 
     public virtual ICollection<Link> Links { get; set; } = new List<Link>();
 
     public virtual Directory? OldDir { get; set; }
+
+    public File()
+    {
+        CreationTime = DateTime.Now;
+    }
 }

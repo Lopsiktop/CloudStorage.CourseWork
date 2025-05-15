@@ -256,7 +256,7 @@ public class FileController : BaseApiController
         var dirPath = await GetPath(file.DirectoryId, _context);
         var path = CloudProvider.GetFilePath(dirPath, file.Name);
 
-        var creation = System.IO.File.GetCreationTime(path);
+        var creation = file.CreationTime ?? DateTime.MinValue;
         var modification = System.IO.File.GetLastWriteTime(path);
 
         var addHistory = await _context.Histories.Where(x => x.FileId == file.Id).OrderByDescending(x => x.Date).FirstOrDefaultAsync();

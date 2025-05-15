@@ -15,6 +15,8 @@ public partial class Directory
 
     public string? TrashName { get; set; }
 
+    public DateTime? CreationTime { get; set; }
+
     public virtual ICollection<File> FileDirectories { get; set; } = new List<File>();
 
     public virtual ICollection<File> FileOldDirs { get; set; } = new List<File>();
@@ -34,4 +36,9 @@ public partial class Directory
     public virtual ICollection<User> UserRootDirs { get; set; } = new List<User>();
 
     public virtual ICollection<User> UserTrashDirs { get; set; } = new List<User>();
+
+    public Directory()
+    {
+        CreationTime = DateTime.Now;
+    }
 }
