@@ -40,10 +40,10 @@ namespace CloudStorage.WebApi.Controllers
                     new ReturnRootDirDto(
                         user.RootDir.Id, 
                         user.RootDir.Name,
-                        user.RootDir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)), 
-                        user.RootDir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name))
+                        user.RootDir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size, x.CreationTime ?? DateTime.MinValue)), 
+                        user.RootDir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name, x.CreationTime ?? DateTime.MinValue))
                     ),
-                    new ReturnDirDto(user.TrashDir.Id, user.TrashDir.Name)
+                    new ReturnDirDto(user.TrashDir.Id, user.TrashDir.Name, user.TrashDir.CreationTime ?? DateTime.MinValue)
                 )
             );
         }

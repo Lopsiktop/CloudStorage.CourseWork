@@ -149,8 +149,8 @@ public partial class RootViewModel : ObservableValidator
                     return;
                 }
 
-                Dirs = result1.Value.Dirs.OrderByDescending(x => x.CreationTime).Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
-                Files = result1.Value.Files.OrderByDescending(x => x.CreationTime).Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToObservableCollection();
+                Dirs = result1.Value.Dirs.OrderByDescending(x => x.CreationTime).Select(x => new ReturnDirDto(x.DirId, x.DirName, x.CreationTime)).ToObservableCollection();
+                Files = result1.Value.Files.OrderByDescending(x => x.CreationTime).Select(x => new ReturnFileDto(x.Id, x.Name, x.Size, x.CreationTime)).ToObservableCollection();
 
                 break;
             case "3":
@@ -164,8 +164,8 @@ public partial class RootViewModel : ObservableValidator
                     return;
                 }
 
-                Dirs = result2.Value.Dirs.Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
-                Files = result2.Value.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToObservableCollection();
+                Dirs = result2.Value.Dirs.Select(x => new ReturnDirDto(x.DirId, x.DirName, x.CreationTime)).ToObservableCollection();
+                Files = result2.Value.Files.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size, x.CreationTime)).ToObservableCollection();
 
                 break;
             case "4":
@@ -177,7 +177,7 @@ public partial class RootViewModel : ObservableValidator
                     return;
                 }
 
-                Dirs = result3.Value.OrderByDescending(x => x.Size).Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
+                Dirs = result3.Value.OrderByDescending(x => x.Size).Select(x => new ReturnDirDto(x.DirId, x.DirName, x.CreationTime)).ToObservableCollection();
                 Files = Files.OrderByDescending(x => x.Size).ToObservableCollection();
 
                 break;
@@ -190,7 +190,7 @@ public partial class RootViewModel : ObservableValidator
                     return;
                 }
 
-                Dirs = result4.Value.Select(x => new ReturnDirDto(x.DirId, x.DirName)).ToObservableCollection();
+                Dirs = result4.Value.Select(x => new ReturnDirDto(x.DirId, x.DirName, x.CreationTime)).ToObservableCollection();
                 Files = Files.OrderBy(x => x.Size).ToObservableCollection();
                 break;
         }
@@ -388,7 +388,7 @@ public partial class RootViewModel : ObservableValidator
         if (await IsBusy())
             return;
 
-        Dirs.Add(new ReturnDirDto(-1, "") { IsEditing = true });
+        Dirs.Add(new ReturnDirDto(-1, "", DateTime.Now) { IsEditing = true });
     }
 
     public async Task TreeValueChanged()
@@ -396,7 +396,7 @@ public partial class RootViewModel : ObservableValidator
         if (await IsBusy())
             return;
 
-        var dir = new ReturnDirDto(TreeValue.DirId, TreeValue.Name);
+        var dir = new ReturnDirDto(TreeValue.DirId, TreeValue.Name, TreeValue.CreationTime);
         await LoadDir(dir);
     }
 
@@ -495,7 +495,7 @@ public partial class RootViewModel : ObservableValidator
 
             node.DirId = result.Value.RootDir.DirId;
             Nodes[1].DirId = result.Value.TrashDir.DirId;
-            var root = new ReturnDirDto(node.DirId, node.Name);
+            var root = new ReturnDirDto(node.DirId, node.Name, node.CreationTime);
             DirSteps.Add(root);
             CurrentDir = root;
 

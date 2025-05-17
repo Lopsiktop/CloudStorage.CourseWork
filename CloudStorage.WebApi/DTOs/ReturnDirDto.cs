@@ -1,3 +1,3 @@
 ﻿namespace CloudStorage.WebApi.DTOs;
 
-public record ReturnDirDto(int DirId, string DirName);
+public record ReturnDirDto(int DirId, string DirName, DateTime CreationTime);

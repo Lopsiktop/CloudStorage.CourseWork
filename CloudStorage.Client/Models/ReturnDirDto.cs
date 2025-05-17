@@ -4,10 +4,11 @@ namespace CloudStorage.Client.Models;
 
 public partial class ReturnDirDto : ObservableObject
 {
-    public ReturnDirDto(int dirId, string dirName)
+    public ReturnDirDto(int dirId, string dirName, DateTime creationTime)
     {
         DirId = dirId;
         DirName = dirName;
+        CreationTime = creationTime;
     }
     public int DirId { get; set; }
 
@@ -15,5 +16,8 @@ public partial class ReturnDirDto : ObservableObject
     private string _DirName;
 
     [ObservableProperty]
-    private bool _IsEditing = false;    
+    private bool _IsEditing = false;
+
+    [ObservableProperty]
+    private DateTime _CreationTime;
 }

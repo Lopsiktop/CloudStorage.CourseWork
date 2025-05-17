@@ -19,6 +19,8 @@
         <conv:BoolToVisibleConverter x:Key="boolconv"/>
         <conv:BoolToVisibleDescConverter x:Key="descconv"/>
         <conv:ZipConverter x:Key="zipconv"/>
+        <conv:DateConverter x:Key="dateconv"/>
+        <conv:TypeFileConverter x:Key="typeconv"/>
 
         <conv:FileToIconConverter x:Key="fileconv"/>
         <conv:BytesToStandardConverter x:Key="byteconv"/>
@@ -156,6 +158,40 @@ Padding="10 5" BorderBrush="Gray"/>
                                 <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Отпустите мышь для перемещения"/>
                             </Border>
                             <ListView Name="ListMode" Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DragEnter="ListView_DragEnter" AllowDrop="True" DragLeave="ListView_DragLeave" Drop="ListView_Drop">
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="True">
+                                        <GridView.Columns>
+                                            <GridViewColumn Header="Название" Width="300"/>
+                                            <GridViewColumn Header="Дата создания">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Height="30">
+                                                            <TextBlock VerticalAlignment="Center" Text="{Binding CreationTime, Converter={StaticResource dateconv}}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="Тип">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Height="30">
+                                                            <TextBlock VerticalAlignment="Center" Text="{Binding Converter={StaticResource typeconv}}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="Размер">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Height="30">
+                                                            <TextBlock VerticalAlignment="Center" Text="{Binding Size, Converter={StaticResource byteconv}}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView.Columns>
+                                    </GridView>
+                                </ListView.View>
                                 <ListView.Resources>
                                     <CollectionViewSource x:Key="DirCollection" Source="{Binding Dirs}"/>
                                     <CollectionViewSource x:Key="FileCollection" Source="{Binding Files}"/>

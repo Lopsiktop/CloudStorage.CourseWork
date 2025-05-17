@@ -79,7 +79,7 @@ public class FileController : BaseApiController
         await _context.SaveChangesAsync();
 
         await AddHistoryAction(user, ActionType.Renamed, _context, $"Файл \"{oldName}\" был переименован на \"{model.Name}\"", fileId: file.Id);
-        return Ok(new ReturnFileDto(file.Id, file.Name, file.Size));
+        return Ok(new ReturnFileDto(file.Id, file.Name, file.Size, file.CreationTime ?? DateTime.MinValue));
     }
 
     [HttpDelete("{fileId}"), Authorize]
@@ -139,7 +139,7 @@ public class FileController : BaseApiController
             await _context.SaveChangesAsync();
 
             await AddHistoryAction(user, ActionType.Added, _context, $"Файл \"{file.Name}\" был загружен на диск", fileId: file.Id);
-            return Ok(new ReturnFileDto(file.Id, file.Name, file.Size));
+            return Ok(new ReturnFileDto(file.Id, file.Name, file.Size, file.CreationTime ?? DateTime.MinValue));
         }
 
         return BadRequest("Не удалось загрузить файл");
@@ -157,7 +157,7 @@ public class FileController : BaseApiController
         if (user.RootDirId != rootId && user.TrashDirId != rootId)
             return BadRequest("Данная папка не ваша");
 
-        var files = dir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size));
+        var files = dir.FileDirectories.Select(x => new ReturnFileDto(x.Id, x.Name, x.Size, x.CreationTime ?? DateTime.MinValue));
 
         return Ok(files);
     }

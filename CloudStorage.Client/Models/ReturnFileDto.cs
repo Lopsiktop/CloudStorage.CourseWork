@@ -13,10 +13,14 @@ public partial class ReturnFileDto : ObservableObject
     [ObservableProperty]
     private bool _IsEditing = false;
 
-    public ReturnFileDto(int id, string name, decimal size)
+    [ObservableProperty]
+    private DateTime _CreationTime;
+
+    public ReturnFileDto(int id, string name, decimal size, DateTime creationTime)
     {
         Id = id;
         Name = name;
         Size = size;
+        CreationTime = creationTime;
     }
 }

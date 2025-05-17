@@ -204,7 +204,7 @@ namespace CloudStorage.WebApi.Controllers
             await _context.SaveChangesAsync();
 
             await AddHistoryAction(user, ActionType.Renamed, _context, $"Папка \"{oldDir}\" была переименована на \"{dir.Name}\"", dirId: dir.Id);
-            return Ok(new ReturnDirDto(dir.Id, dir.Name));
+            return Ok(new ReturnDirDto(dir.Id, dir.Name, dir.CreationTime ?? DateTime.MinValue));
         }
 
         [HttpDelete("{dirId}"), Authorize]
@@ -295,7 +295,7 @@ namespace CloudStorage.WebApi.Controllers
                 return BadRequest("Не удалось создать папку");
 
             await AddHistoryAction(user, ActionType.Created, _context, $"Папка \"{dir.Name}\" была создана", dirId: dir.Id);
-            return Ok(new ReturnDirDto(dir.Id, dir.Name));
+            return Ok(new ReturnDirDto(dir.Id, dir.Name, dir.CreationTime ?? DateTime.MinValue));
         }
 
         [HttpGet("GetDirsByDirId/{dirId}"), Authorize]
@@ -310,7 +310,7 @@ namespace CloudStorage.WebApi.Controllers
             if (user.RootDirId != rootId && user.TrashDirId != rootId)
                 return BadRequest("Данная папка не ваша");
 
-            var dirs = dir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name));
+            var dirs = dir.InverseParent.Select(x => new ReturnDirDto(x.Id, x.Name, x.CreationTime ?? DateTime.MinValue));
             return Ok(dirs);
         }
 

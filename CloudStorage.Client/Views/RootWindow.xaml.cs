@@ -106,7 +106,7 @@ namespace CloudStorage.Client.Views
                 return;
 
             parameter.IsEditing = true;
-            viewModel.OldFile = new ReturnFileDto(parameter.Id, parameter.Name, parameter.Size);
+            viewModel.OldFile = new ReturnFileDto(parameter.Id, parameter.Name, parameter.Size, parameter.CreationTime);
         }
 
         private void MenuItem_Click_3(object sender, RoutedEventArgs e)
@@ -116,7 +116,7 @@ namespace CloudStorage.Client.Views
                 return;
 
             parameter.IsEditing = true;
-            viewModel.OldDir = new ReturnDirDto(parameter.DirId, parameter.DirName);
+            viewModel.OldDir = new ReturnDirDto(parameter.DirId, parameter.DirName, parameter.CreationTime);
         }
 
         private async void MenuItem_Click_4(object sender, RoutedEventArgs e)

@@ -227,7 +227,7 @@ public static class CloudProvider
         {
             var info = new FileInfo(file);
 
-            list.Add(new ReturnFileDto(0, info.Name, info.Length));
+            list.Add(new ReturnFileDto(0, info.Name, info.Length, info.CreationTime));
         }
 
         return list;
@@ -241,7 +241,7 @@ public static class CloudProvider
         foreach (var dir in dirs)
         {
             var name = Path.GetFileName(dir);
-            list.Add(new ReturnDirDto(0, name));
+            list.Add(new ReturnDirDto(0, name, DateTime.Now));
         }
 
         return list;

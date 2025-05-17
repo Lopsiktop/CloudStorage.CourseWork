@@ -51,7 +51,7 @@ public class FilterController : BaseApiController
         foreach (var dir in dirs)
         {
             var size = await GetSize(dir.Id);
-            list.Add(new ReturnDirSizeDto(dir.Id, dir.Name, size));
+            list.Add(new ReturnDirSizeDto(dir.Id, dir.Name, size, dir.CreationTime ?? DateTime.MinValue));
         }
 
         return Ok(list.OrderBy(x => x.Size).ToList());
@@ -114,10 +114,10 @@ public class FilterController : BaseApiController
         var files = await _GetAllFiles(dirs, dir.Id);
 
         var sortedDirs = dirs.Where(x => x.Name.ToLower().Contains(searchField.ToLower()))
-                .Select(x => new ReturnDirDto(x.Id, x.Name)).ToList();
+                .Select(x => new ReturnDirDto(x.Id, x.Name, x.CreationTime ?? DateTime.MinValue)).ToList();
 
         var sortedFiles = files.Where(x => x.Name.ToLower().Contains(searchField.ToLower()))
-            .Select(x => new ReturnFileDto(x.Id, x.Name, x.Size)).ToList();
+            .Select(x => new ReturnFileDto(x.Id, x.Name, x.Size, x.CreationTime ?? DateTime.MinValue)).ToList();
 
         return Ok(new FilterReturnDto(sortedFiles, sortedDirs));
     }
@@ -160,7 +160,7 @@ public class FilterController : BaseApiController
         {
             var creation = item.CreationTime ?? DateTime.MinValue;
             if (creation >= from && creation <= to)
-                sortedDirs.Add(new ReturnDirDto(item.Id, item.Name));
+                sortedDirs.Add(new ReturnDirDto(item.Id, item.Name, item.CreationTime ?? DateTime.MinValue));
         }
 
         var sortedFiles = new List<ReturnFileDto>();
@@ -169,7 +169,7 @@ public class FilterController : BaseApiController
         {
             var creation = item.CreationTime ?? DateTime.MinValue;
             if (creation >= from && creation <= to)
-                sortedFiles.Add(new ReturnFileDto(item.Id, item.Name, item.Size));
+                sortedFiles.Add(new ReturnFileDto(item.Id, item.Name, item.Size, item.CreationTime ?? DateTime.MinValue));
         }
 
         return Ok(new FilterReturnDto(sortedFiles, sortedDirs));

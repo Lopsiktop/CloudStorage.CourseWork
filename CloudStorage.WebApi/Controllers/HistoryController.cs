@@ -26,8 +26,8 @@ public class HistoryController : BaseApiController
             return BadRequest();
 
         var history = await _context.Histories.Where(x => x.UserId == user.Id).Include(x => x.File).Include(x => x.Directory).OrderByDescending(x => x.Id)
-            .Select(x => new ReturnHistoryDto(x.Id, (ActionType)x.ActionType, x.File != null ? new ReturnFileDto(x.File.Id, x.File.Name, x.File.Size) : null,
-            x.Directory != null ? new ReturnDirDto(x.Directory.Id, x.Directory.Name) : null, x.Text, x.Date)).ToListAsync();
+            .Select(x => new ReturnHistoryDto(x.Id, (ActionType)x.ActionType, x.File != null ? new ReturnFileDto(x.File.Id, x.File.Name, x.File.Size, x.File.CreationTime ?? DateTime.MinValue) : null,
+            x.Directory != null ? new ReturnDirDto(x.Directory.Id, x.Directory.Name, x.Directory.CreationTime ?? DateTime.MinValue) : null, x.Text, x.Date)).ToListAsync();
 
         return Ok(history);
     }
@@ -41,7 +41,7 @@ public class HistoryController : BaseApiController
 
         var history = await _context.Histories.Where(x => x.UserId == user.Id && x.FileId == id)
             .Include(x => x.File).OrderByDescending(x => x.Id)
-            .Select(x => new ReturnHistoryDto(x.Id, (ActionType)x.ActionType, new ReturnFileDto(x.File.Id, x.File.Name, x.File.Size),
+            .Select(x => new ReturnHistoryDto(x.Id, (ActionType)x.ActionType, new ReturnFileDto(x.File.Id, x.File.Name, x.File.Size, x.File.CreationTime ?? DateTime.MinValue),
             null, x.Text, x.Date)).ToListAsync();
 
         return Ok(history);
@@ -57,7 +57,7 @@ public class HistoryController : BaseApiController
         var history = await _context.Histories.Where(x => x.UserId == user.Id && x.DirectoryId == id)
             .Include(x => x.Directory).OrderByDescending(x => x.Id)
             .Select(x => new ReturnHistoryDto(x.Id, (ActionType)x.ActionType, null,
-            new ReturnDirDto(x.Directory.Id, x.Directory.Name), x.Text, x.Date)).ToListAsync();
+            new ReturnDirDto(x.Directory.Id, x.Directory.Name, x.Directory.CreationTime ?? DateTime.MinValue), x.Text, x.Date)).ToListAsync();
 
         return Ok(history);
     }
