@@ -372,6 +372,10 @@ public static class ApiHelper
         if (response.IsSuccessStatusCode)
         {
             using var stream = await response.Content.ReadAsStreamAsync();
+
+            if (File.Exists(path))
+                return new Result<bool>("Файл с таким названием уже существует");
+
             using (var fs = new FileStream(path, FileMode.CreateNew))
             {
                 await stream.CopyToAsync(fs);
