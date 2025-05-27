@@ -25,11 +25,18 @@ public class HistoryController : BaseApiController
         if (user == null)
             return BadRequest();
 
-        var history = await _context.Histories.Where(x => x.UserId == user.Id).Include(x => x.File).Include(x => x.Directory).OrderByDescending(x => x.Id)
-            .Select(x => new ReturnHistoryDto(x.Id, (ActionType)x.ActionType, x.File != null ? new ReturnFileDto(x.File.Id, x.File.Name, x.File.Size, x.File.CreationTime ?? DateTime.MinValue) : null,
-            x.Directory != null ? new ReturnDirDto(x.Directory.Id, x.Directory.Name, x.Directory.CreationTime ?? DateTime.MinValue) : null, x.Text, x.Date)).ToListAsync();
+        var dtos = new List<ReturnHistoryDto>();
+        var history = await _context.Histories.Where(x => x.UserId == user.Id).Include(x => x.File).Include(x => x.Directory).OrderByDescending(x => x.Id).ToListAsync();
 
-        return Ok(history);
+        foreach (var item in history)
+        {
+            var file = item.File == null ? null : new ReturnFileDto(item.File.Id, item.File.Name, item.File.Size, item.File.CreationTime ?? DateTime.MinValue);
+            var dir = item.Directory != null ? new ReturnDirDto(item.Directory.Id, item.Directory.Name, item.Directory.CreationTime ?? DateTime.MinValue) : null;
+
+            dtos.Add(new ReturnHistoryDto(item.Id, (ActionType)item.ActionType, file, dir, item.Text, item.Date));
+        }
+
+        return Ok(dtos);
     }
 
     [HttpGet("File/{id}"), Authorize]
