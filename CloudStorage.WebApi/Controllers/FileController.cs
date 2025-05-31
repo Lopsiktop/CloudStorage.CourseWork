@@ -5,6 +5,7 @@ using CloudStorage.WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using Directory = CloudStorage.Data.Models.Directory;
 using File = CloudStorage.Data.Models.File;
 
@@ -119,9 +120,27 @@ public class FileController : BaseApiController
             return BadRequest("Данная папка не ваша");
 
         //todo: limit size of one file (if it would need for course work or diplom)
-        //todo: check disk space (if it would need for course work or diplom)
 
-        var exists = await _context.Files.FirstOrDefaultAsync(x => x.DirectoryId == model.DirId && x.Name == model.File.FileName);
+        // check disk space on limit 100MB
+        decimal totalSize = Math.Round((decimal)model.File.Length / 1048576, 2);
+
+        var dirs = await _context.Directories.ToListAsync();
+        foreach (var item in dirs)
+        {
+            var root = await GetRootDirId(item.Id, _context);
+            if (root == user.RootDirId)
+            {
+                var size = await _context.Files.Where(x => x.DirectoryId == item.Id).SumAsync(x => x.Size);
+				decimal megabytes = Math.Round(size / 1048576, 2);
+                totalSize += megabytes;
+			}
+        }
+
+        if (totalSize >= 100)
+            return BadRequest("Вы не можете превысить лимит диска в 100мб");
+		//
+
+		var exists = await _context.Files.FirstOrDefaultAsync(x => x.DirectoryId == model.DirId && x.Name == model.File.FileName);
         if (exists != null)
             return BadRequest("Файл с таким названием уже существует");
 

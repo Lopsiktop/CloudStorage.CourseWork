@@ -1,4 +1,5 @@
 ﻿using CloudStorage.Client.Models;
+using CloudStorage.Client.UI.UIHelpers;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -293,15 +294,22 @@ public static class ApiHelper
                         form.Add(fileContent, "File", Path.GetFileName(file));
                         form.Add(new StringContent(dirId.ToString()), "DirId");
 
-                        var response = await _http.PostAsync(_url + "File", form);
-                        if (response.IsSuccessStatusCode)
+                        try
                         {
-                            var dto = await response.Content.ReadFromJsonAsync<ReturnFileDto>();
-                            return new Result<ReturnFileDto>(dto);
-                        }
+							var response = await _http.PostAsync(_url + "File", form);
+							if (response.IsSuccessStatusCode)
+							{
+								var dto = await response.Content.ReadFromJsonAsync<ReturnFileDto>();
+								return new Result<ReturnFileDto>(dto);
+							}
 
-                        var error = await response.Content.ReadAsStringAsync();
-                        return new Result<ReturnFileDto>(error);
+							var error = await response.Content.ReadAsStringAsync();
+							return new Result<ReturnFileDto>(error);
+						}
+                        catch
+                        {
+							return new Result<ReturnFileDto>("Файл слишком большой");
+						}
                     }
                 }
             }
